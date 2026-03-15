@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:link": "node scripts/supabase-cli.mjs link",
+    "supabase:db:push": "node scripts/supabase-cli.mjs db push --linked",
+    "supabase:db:pull": "node scripts/supabase-cli.mjs db pull --linked",
+    "supabase:migration:list": "node scripts/supabase-cli.mjs migration list --linked"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",

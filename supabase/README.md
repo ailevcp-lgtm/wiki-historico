@@ -2,6 +2,26 @@
 
 Esta carpeta contiene todo lo necesario para levantar la base de datos de la wiki en Supabase.
 
+## Push directo desde este repo
+
+La CLI de Supabase quedó instalada como dependencia de desarrollo y se puede ejecutar con `npm`.
+
+Variables adicionales recomendadas en `.env.local`:
+
+- `SUPABASE_ACCESS_TOKEN`
+- `SUPABASE_DB_PASSWORD`
+- `SUPABASE_PROJECT_REF` (opcional si `NEXT_PUBLIC_SUPABASE_URL` ya apunta al proyecto correcto)
+
+Flujo base:
+
+1. Ejecutar `npm run supabase:link`
+2. Revisar migraciones con `npm run supabase:migration:list`
+3. Empujar cambios con `npm run supabase:db:push`
+
+Si el esquema remoto ya fue modificado desde el dashboard y todavía no está representado en `supabase/migrations/`, primero conviene traer una baseline:
+
+`npm run supabase:db:pull -- remote_baseline`
+
 ## Orden recomendado
 
 1. Ejecutar las migraciones en `supabase/migrations/` en orden alfabético.
