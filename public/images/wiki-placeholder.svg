@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" fill="none">
+  <rect width="640" height="380" fill="#F8F9FA"/>
+  <rect x="40" y="40" width="560" height="300" rx="6" fill="#FFFFFF" stroke="#A2A9B1" stroke-width="2"/>
+  <rect x="88" y="96" width="214" height="24" rx="4" fill="#A7D7F9"/>
+  <rect x="88" y="134" width="364" height="14" rx="3" fill="#D7DCE2"/>
+  <rect x="88" y="158" width="298" height="14" rx="3" fill="#D7DCE2"/>
+  <rect x="88" y="212" width="470" height="72" rx="4" fill="#EAECF0"/>
+  <text x="88" y="74" fill="#202122" font-family="Georgia, serif" font-size="22">Entrada de la wiki</text>
+</svg>

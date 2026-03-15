@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" fill="none">
+  <rect width="640" height="380" fill="#F4F5F7"/>
+  <rect x="38" y="34" width="564" height="312" rx="6" fill="#FFFDF7" stroke="#A2A9B1" stroke-width="2"/>
+  <rect x="102" y="96" width="436" height="168" rx="8" fill="#FFFFFF" stroke="#A2A9B1" stroke-width="2"/>
+  <rect x="102" y="96" width="436" height="42" fill="#A7D7F9"/>
+  <path d="M180 206H282" stroke="#8E6F56" stroke-width="8" stroke-linecap="round"/>
+  <path d="M358 206H460" stroke="#8E6F56" stroke-width="8" stroke-linecap="round"/>
+  <path d="M320 184V228" stroke="#8E6F56" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="320" cy="206" r="24" stroke="#8E6F56" stroke-width="8"/>
+  <text x="100" y="74" fill="#202122" font-family="Georgia, serif" font-size="22">Pacto de Córdoba</text>
+</svg>

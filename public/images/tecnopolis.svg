@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" fill="none">
+  <rect width="640" height="380" fill="#EEF3F8"/>
+  <rect x="38" y="34" width="564" height="312" rx="6" fill="#FFFFFF" stroke="#A2A9B1" stroke-width="2"/>
+  <path d="M130 270V190" stroke="#5A7FA8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M220 270V120" stroke="#5A7FA8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M320 270V160" stroke="#5A7FA8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M420 270V90" stroke="#5A7FA8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M510 270V140" stroke="#5A7FA8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M130 270H510" stroke="#202122" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="220" cy="120" r="18" fill="#A7D7F9"/>
+  <circle cx="420" cy="90" r="18" fill="#A7D7F9"/>
+  <text x="96" y="72" fill="#202122" font-family="Georgia, serif" font-size="22">Tecnópolis</text>
+</svg>

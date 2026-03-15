@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" fill="none">
+  <rect width="640" height="380" fill="#F4F5F7"/>
+  <rect x="30" y="30" width="580" height="320" rx="6" fill="#FFFFFF" stroke="#A2A9B1" stroke-width="2"/>
+  <path d="M110 280L210 150L290 220L360 130L470 280" stroke="#5A7FA8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="92" y="90" width="186" height="26" rx="4" fill="#A7D7F9"/>
+  <rect x="92" y="126" width="304" height="12" rx="3" fill="#D7DCE2"/>
+  <rect x="92" y="146" width="244" height="12" rx="3" fill="#D7DCE2"/>
+  <text x="92" y="74" fill="#202122" font-family="Georgia, serif" font-size="22">Crisis del Litio Andino</text>
+</svg>
