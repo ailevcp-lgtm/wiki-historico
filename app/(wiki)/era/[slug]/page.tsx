@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getArticlesByEra, getEraBySlug, getNavigationData } from "@/lib/repository";
+import { getArticlesByEra, getEraBySlug, getNavigationData, getPublicWikiCopy } from "@/lib/repository";
 
-export function generateStaticParams() {
-  return getNavigationData().eras.map((era) => ({ slug: era.slug }));
+export async function generateStaticParams() {
+  return (await getNavigationData()).eras.map((era) => ({ slug: era.slug }));
 }
 
 export default async function EraPage({
@@ -13,13 +13,13 @@ export default async function EraPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const era = getEraBySlug(resolvedParams.slug);
+  const era = await getEraBySlug(resolvedParams.slug);
 
   if (!era) {
     notFound();
   }
 
-  const articles = await getArticlesByEra(era.slug);
+  const [articles, copy] = await Promise.all([getArticlesByEra(era.slug), getPublicWikiCopy()]);
 
   return (
     <div className="space-y-6">
@@ -36,7 +36,7 @@ export default async function EraPage({
 
       <section className="wiki-paper p-5 md:p-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading text-2xl">Hitos de la era</h2>
+          <h2 className="font-heading text-2xl">{copy.eraPage.sectionTitle}</h2>
           <span className="text-sm text-wiki-muted">
             {era.yearStart}-{era.yearEnd}
           </span>
@@ -53,7 +53,7 @@ export default async function EraPage({
                 {article.hitoId ? <span className="wiki-badge">{article.hitoId}</span> : null}
               </div>
               <h3 className="mt-3 font-heading text-2xl">
-                <Link href={`/article/${article.slug}`} className="hover:text-wiki-blue">
+                <Link href={`/article/${article.slug}`} className="wiki-link-track">
                   {article.title}
                 </Link>
               </h3>

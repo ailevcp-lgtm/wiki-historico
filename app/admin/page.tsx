@@ -6,6 +6,11 @@ import { requireEditorPageAccess } from "@/lib/editor/auth";
 
 const cards = [
   {
+    href: "/admin/config",
+    title: "Configurar wiki",
+    description: "Editar eras, categorías, bloques y textos visibles de la experiencia pública."
+  },
+  {
     href: "/admin/import",
     title: "Importar fichas",
     description: "Subir y normalizar lotes .docx del CEA antes de guardarlos en staging."

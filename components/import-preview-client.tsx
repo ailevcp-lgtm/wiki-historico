@@ -10,32 +10,41 @@ type BatchImportError = {
   error: string;
 };
 
+type HistoryImportSummary = {
+  mode: "pilot" | "full";
+  availableHitos: number;
+  availableCountries: number;
+  returnedHitos: number;
+  returnedCountries: number;
+};
+
 export function ImportPreviewClient() {
   const [error, setError] = useState<string>("");
   const [batchErrors, setBatchErrors] = useState<BatchImportError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStaging, setIsStaging] = useState(false);
   const [stageMessage, setStageMessage] = useState("");
+  const [sourceMessage, setSourceMessage] = useState("");
   const [results, setResults] = useState<ImportPreviewResult[]>([]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const files = formData.getAll("files").filter((entry): entry is File => entry instanceof File && entry.size > 0);
+    const files = formData
+      .getAll("files")
+      .filter((entry): entry is File => entry instanceof File && entry.size > 0);
 
     if (files.length === 0) {
-      setError("Selecciona al menos un archivo .docx antes de continuar.");
+      setError("Selecciona al menos un archivo .docx o .md antes de continuar.");
       setResults([]);
       setBatchErrors([]);
+      setSourceMessage("");
       return;
     }
 
     setIsLoading(true);
-    setError("");
-    setResults([]);
-    setBatchErrors([]);
-    setStageMessage("");
+    resetImportState();
 
     try {
       const batchFormData = new FormData();
@@ -59,6 +68,36 @@ export function ImportPreviewClient() {
       setBatchErrors(payload.errors ?? []);
     } catch {
       setError("Falló la solicitud de importación. Revisa la conexión local e inténtalo de nuevo.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleHistoryImport(mode: "pilot" | "full") {
+    setIsLoading(true);
+    resetImportState();
+
+    try {
+      const response = await fetch("/api/import/history-preview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ mode })
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setError(payload.error ?? "No se pudo leer la carpeta HISTORIA.");
+        return;
+      }
+
+      setResults(payload.results ?? []);
+      setBatchErrors(payload.errors ?? []);
+      setSourceMessage(buildHistoryImportMessage(payload.summary));
+    } catch {
+      setError("Falló la lectura local de la carpeta HISTORIA.");
     } finally {
       setIsLoading(false);
     }
@@ -96,15 +135,61 @@ export function ImportPreviewClient() {
     }
   }
 
+  function resetImportState() {
+    setError("");
+    setResults([]);
+    setBatchErrors([]);
+    setStageMessage("");
+    setSourceMessage("");
+  }
+
   return (
     <div className="space-y-6">
+      <section className="wiki-paper p-5 md:p-6">
+        <header className="border-b border-wiki-border pb-5">
+          <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">Fuente local</p>
+          <h1 className="wiki-page-title mt-2">Importación directa desde HISTORIA</h1>
+          <p className="mt-3 max-w-3xl text-lg leading-8 text-wiki-muted">
+            Lee los documentos maestros del proyecto o la carpeta <code>HISTORIA/split</code>,
+            separa hitos y países en previews individuales y deja el lote listo para pasar por la
+            cola editorial.
+          </p>
+        </header>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => handleHistoryImport("pilot")}
+            className="rounded-sm border border-wiki-border bg-white px-4 py-2 font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? "Procesando..." : "Cargar piloto (5 hitos + 5 países)"}
+          </button>
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => handleHistoryImport("full")}
+            className="rounded-sm border border-wiki-border bg-wiki-page px-4 py-2 font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? "Procesando..." : "Cargar lote completo"}
+          </button>
+        </div>
+
+        <p className="mt-4 text-sm text-wiki-muted">
+          Usa el piloto para validar nombres, mapas, órganos, puntajes y markdown antes de correr
+          el lote completo desde los maestros o desde <code>HISTORIA/split</code>.
+        </p>
+
+        {sourceMessage ? <p className="mt-4 text-sm text-wiki-muted">{sourceMessage}</p> : null}
+      </section>
+
       <form onSubmit={handleSubmit} className="wiki-paper p-5 md:p-6">
         <header className="border-b border-wiki-border pb-5">
-          <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">Importación CEA</p>
-          <h1 className="wiki-page-title mt-2">Vista previa de fichas .docx</h1>
+          <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">Carga manual</p>
+          <h1 className="wiki-page-title mt-2">Vista previa de fichas .docx y .md</h1>
           <p className="mt-3 max-w-3xl text-lg leading-8 text-wiki-muted">
-            Sube una ficha del CEA en formato <code>.docx</code> y el sistema generará un borrador
-            estructurado para la wiki antes de conectarlo con Supabase.
+            Sube una ficha del CEA en formato <code>.docx</code> o <code>.md</code> y el sistema
+            generará un borrador estructurado para la wiki antes de conectarlo con Supabase.
           </p>
         </header>
 
@@ -112,7 +197,7 @@ export function ImportPreviewClient() {
           <input
             type="file"
             name="files"
-            accept=".docx"
+            accept=".docx,.md,text/markdown"
             multiple
             className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2 text-sm"
           />
@@ -127,7 +212,8 @@ export function ImportPreviewClient() {
 
         <div className="mt-4 text-sm text-wiki-muted">
           El parser reconoce dos plantillas: <strong>Ficha de Hito</strong> y{" "}
-          <strong>Ficha de País/Región</strong>. Puedes cargar varias fichas en un solo lote.
+          <strong>Ficha de País/Región</strong>. Puedes cargar varias fichas en un solo lote y usar
+          los archivos separados en <code>.md</code>.
         </div>
 
         {error ? <p className="mt-4 text-sm font-semibold text-wiki-red">{error}</p> : null}
@@ -157,7 +243,9 @@ export function ImportPreviewClient() {
           stageMessage={stageMessage}
         />
       ) : null}
-      {results.length > 0 ? results.map((result) => <ImportResultView key={result.fileName} result={result} />) : null}
+      {results.length > 0
+        ? results.map((result, index) => <ImportResultView key={`${result.fileName}-${index}`} result={result} />)
+        : null}
     </div>
   );
 }
@@ -183,7 +271,9 @@ function ImportResultView({ result }: { result: ImportPreviewResult }) {
           <h2 className="font-heading text-2xl">Validaciones</h2>
           <div className="mt-3 space-y-2">
             {result.issues.length === 0 ? (
-              <p className="text-sm text-wiki-muted">Sin observaciones. La ficha quedó lista para la siguiente capa.</p>
+              <p className="text-sm text-wiki-muted">
+                Sin observaciones. La ficha quedó lista para la siguiente capa.
+              </p>
             ) : (
               result.issues.map((issue, index) => (
                 <div
@@ -232,7 +322,7 @@ function ImportBatchSummary({
     <section className="wiki-paper p-5 md:p-6">
       <h2 className="font-heading text-2xl">Resumen del lote</h2>
       <div className="mt-4 grid gap-3 md:grid-cols-4">
-        <Field label="Archivos" value={String(results.length)} />
+        <Field label="Registros" value={String(results.length)} />
         <Field label="Hitos" value={String(hitos)} />
         <Field label="Países" value={String(countries)} />
         <Field label="No reconocidos" value={String(unknown)} />
@@ -315,6 +405,12 @@ function CountryPreview({ result }: { result: Extract<ImportPreviewResult, { kin
           <Field label="Bloque" value={result.draft.bloc} />
           <Field label="Era" value={result.draft.eraSlug} />
           <Field label="Hito de referencia" value={result.draft.hitoReference} />
+          <Field label="Foto representante" value={result.draft.flagUrl} />
+          <Field label="Mapa" value={result.draft.mapUrl} />
+          <Field
+            label="Snapshots históricos"
+            value={result.draft.historicalScores?.length ? String(result.draft.historicalScores.length) : undefined}
+          />
         </div>
 
         <div className="mt-5">
@@ -365,7 +461,22 @@ function downloadPreview(result: ImportPreviewResult) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `${result.fileName.replace(/\.[^.]+$/, "")}.preview.json`;
+  anchor.download = `${result.fileName
+    .replace(/\.docx/gi, "")
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\s+/g, "-")}.preview.json`;
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+function buildHistoryImportMessage(summary?: HistoryImportSummary) {
+  if (!summary) {
+    return "";
+  }
+
+  if (summary.mode === "pilot") {
+    return `Piloto generado desde HISTORIA: ${summary.returnedHitos} hitos y ${summary.returnedCountries} países. Lote completo disponible: ${summary.availableHitos} hitos y ${summary.availableCountries} países.`;
+  }
+
+  return `Lote completo generado desde HISTORIA: ${summary.returnedHitos} hitos y ${summary.returnedCountries} países listos para staging.`;
 }

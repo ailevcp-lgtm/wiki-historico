@@ -1,0 +1,641 @@
+{
+  "generatedAt": "2026-03-29T20:44:54.886Z",
+  "sources": {
+    "hitos": "Hitos pasados en limpio.docx",
+    "countries": "Fichas país.docx",
+    "images": {
+      "hitos": {
+        "directory": "/images/history-docs/hitos-pasados-en-limpio",
+        "count": 0
+      },
+      "countries": {
+        "directory": "/images/history-docs/fichas-pais",
+        "count": 60
+      }
+    }
+  },
+  "summary": {
+    "eras": 4,
+    "hitos": 44,
+    "countries": 31,
+    "documentsWithIssues": 4,
+    "totalIssues": 5,
+    "extractedImages": 60,
+    "hitosMissingRealId": 0,
+    "countriesWithNonPaddedHitoReferences": 0,
+    "countriesWithWeirdTrendMarkers": 0
+  },
+  "issueCounts": {
+    "byLevel": {
+      "warning": 5
+    },
+    "byCode": {
+      "placeholder_ubicacion-alcance": 4,
+      "placeholder_actores-principales": 1
+    }
+  },
+  "documents": {
+    "hitos": [
+      {
+        "kind": "hito",
+        "fileName": "001-conflicto-occidente-iran.md",
+        "eraSlug": "era-1",
+        "title": "Conflicto Occidente - Irán",
+        "hitoId": "H-001",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "002-conflicto-iran-liga-arabe.md",
+        "eraSlug": "era-1",
+        "title": "Conflicto Irán - Liga Árabe",
+        "hitoId": "H-002",
+        "issues": [
+          {
+            "code": "placeholder_ubicacion-alcance",
+            "level": "warning",
+            "message": "El campo 'Ubicación / Alcance' parece seguir en modo plantilla."
+          },
+          {
+            "code": "placeholder_actores-principales",
+            "level": "warning",
+            "message": "El campo 'Actores principales' parece seguir en modo plantilla."
+          }
+        ]
+      },
+      {
+        "kind": "hito",
+        "fileName": "003-golpe-de-estado-por-la-guardia-revolucionaria.md",
+        "eraSlug": "era-1",
+        "title": "Golpe de Estado por la guardia revolucionaria",
+        "hitoId": "H-003",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "004-la-gran-avanzada-pakistani.md",
+        "eraSlug": "era-1",
+        "title": "La Gran Avanzada Pakistani",
+        "hitoId": "H-004",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "005-fin-del-conflicto-ucrania-rusia.md",
+        "eraSlug": "era-1",
+        "title": "Fin del conflicto Ucrania-Rusia.",
+        "hitoId": "H-005",
+        "issues": [
+          {
+            "code": "placeholder_ubicacion-alcance",
+            "level": "warning",
+            "message": "El campo 'Ubicación / Alcance' parece seguir en modo plantilla."
+          }
+        ]
+      },
+      {
+        "kind": "hito",
+        "fileName": "006-concilio-de-paz-ruso-ucraniana.md",
+        "eraSlug": "era-1",
+        "title": "Concilio de paz Ruso-Ucraniana",
+        "hitoId": "H-006",
+        "issues": [
+          {
+            "code": "placeholder_ubicacion-alcance",
+            "level": "warning",
+            "message": "El campo 'Ubicación / Alcance' parece seguir en modo plantilla."
+          }
+        ]
+      },
+      {
+        "kind": "hito",
+        "fileName": "007-desarrollo-de-la-economia-africana.md",
+        "eraSlug": "era-1",
+        "title": "Desarrollo de la economía africana",
+        "hitoId": "H-007",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "008-incremento-de-la-izquierda-en-la-union-europea.md",
+        "eraSlug": "era-1",
+        "title": "Incremento de la izquierda en la unión europea",
+        "hitoId": "H-008",
+        "issues": [
+          {
+            "code": "placeholder_ubicacion-alcance",
+            "level": "warning",
+            "message": "El campo 'Ubicación / Alcance' parece seguir en modo plantilla."
+          }
+        ]
+      },
+      {
+        "kind": "hito",
+        "fileName": "009-reforma-constitucional-estadounidense.md",
+        "eraSlug": "era-1",
+        "title": "Reforma constitucional estadounidense",
+        "hitoId": "H-009",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "010-intervencion-de-los-estados-unidos-y-reino-unido-en-groenlandia.md",
+        "eraSlug": "era-1",
+        "title": "Intervención de los Estados Unidos y Reino Unido en Groenlandia",
+        "hitoId": "H-010",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "011-disolucion-de-la-otan.md",
+        "eraSlug": "era-1",
+        "title": "Disolución de la OTAN",
+        "hitoId": "H-011",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "012-creacion-de-aether.md",
+        "eraSlug": "era-1",
+        "title": "Creación de AETHER",
+        "hitoId": "H-012",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "013-infiltracion-irani-en-los-planes-nucleares-de-la-union-europea.md",
+        "eraSlug": "era-1",
+        "title": "Infiltración Iraní en los planes nucleares de la Unión Europea",
+        "hitoId": "H-013",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "014-juicio-de-la-onu-en-la-corte-internacional-a-aether-aether-files.md",
+        "eraSlug": "era-1",
+        "title": "Juicio de la Onu en la corte internacional a AETHER/AETHER FILES",
+        "hitoId": "H-014",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "015-designacion-del-nuevo-ayatola.md",
+        "eraSlug": "era-2",
+        "title": "Designación del nuevo Ayatolá",
+        "hitoId": "H-015",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "016-bombardeo-atomico-a-jerusalen.md",
+        "eraSlug": "era-2",
+        "title": "Bombardeo atómico a Jerusalén",
+        "hitoId": "H-016",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "017-enfrentamiento-nuclear-iran-israel.md",
+        "eraSlug": "era-2",
+        "title": "Enfrentamiento nuclear Irán-Israel",
+        "hitoId": "H-017",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "018-guerra-pakistan-india.md",
+        "eraSlug": "era-2",
+        "title": "Guerra Pakistán - India",
+        "hitoId": "H-018",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "019-nacimiento-de-nueva-judea.md",
+        "eraSlug": "era-2",
+        "title": "Nacimiento de Nueva Judea",
+        "hitoId": "H-019",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "020-crisis-del-luminum-sky.md",
+        "eraSlug": "era-2",
+        "title": "Crisis del Luminum Sky",
+        "hitoId": "H-020",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "021-aether-en-etapa-de-trinchera.md",
+        "eraSlug": "era-2",
+        "title": "Aether en etapa de trinchera",
+        "hitoId": "H-021",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "022-el-declive-europeo.md",
+        "eraSlug": "era-2",
+        "title": "El declive Europeo",
+        "hitoId": "H-022",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "023-contraofensiva-britanica.md",
+        "eraSlug": "era-2",
+        "title": "Contraofensiva británica",
+        "hitoId": "H-023",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "024-disolucion-de-la-ue.md",
+        "eraSlug": "era-2",
+        "title": "Disolución de la UE",
+        "hitoId": "H-024",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "025-proclamacion-del-gran-reino-unido.md",
+        "eraSlug": "era-2",
+        "title": "Proclamación del Gran Reino Unido",
+        "hitoId": "H-025",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "026-conformacion-de-la-confederacion-germana.md",
+        "eraSlug": "era-2",
+        "title": "Conformación de la Confederación Germana",
+        "hitoId": "H-026",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "027-fin-del-conflicto-egipto-europa-bomba-nuclear-en-el-sahara.md",
+        "eraSlug": "era-2",
+        "title": "Fín del conflicto Egipto-Europa, Bomba nuclear en el Sahara",
+        "hitoId": "H-027",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "028-madre-de-las-guerras.md",
+        "eraSlug": "era-2",
+        "title": "MADRE DE LAS GUERRAS",
+        "hitoId": "H-028",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "029-el-fin-de-naciones-unidas-el-nacimiento-de-la-sociedad-de-estados.md",
+        "eraSlug": "era-2",
+        "title": "El fin de naciones unidas, el nacimiento de la Sociedad de Estados",
+        "hitoId": "H-029",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "030-la-hambruna-del-50.md",
+        "eraSlug": "era-2",
+        "title": "La hambruna del 50",
+        "hitoId": "H-030",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "031-aparicion-de-paramos.md",
+        "eraSlug": "era-2",
+        "title": "Aparición de páramos",
+        "hitoId": "H-031",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "032-consolidacion-de-ummah.md",
+        "eraSlug": "era-3",
+        "title": "Consolidación de Ummah",
+        "hitoId": "H-032",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "033-guerra-civil-eeuu.md",
+        "eraSlug": "era-3",
+        "title": "Guerra civil EEUU",
+        "hitoId": "H-033",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "034-consolidacion-del-neoperonismo-enfrentamiento-con-nueva-judea.md",
+        "eraSlug": "era-3",
+        "title": "Consolidación del Neoperonismo, enfrentamiento con Nueva Judea",
+        "hitoId": "H-034",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "035-consolidacion-de-los-regimen-neo-autoritarios-europeos.md",
+        "eraSlug": "era-3",
+        "title": "Consolidación de los Régimen Neo-Autoritarios Europeos",
+        "hitoId": "H-035",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "036-nacimiento-de-la-union-para-europeos.md",
+        "eraSlug": "era-3",
+        "title": "Nacimiento de la Unión para Europeos",
+        "hitoId": "H-036",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "037-consolidacion-de-los-primeros-narcoestados-legales.md",
+        "eraSlug": "era-3",
+        "title": "Consolidación de los primeros “NarcoEstados legales”",
+        "hitoId": "H-037",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "038-la-tesis-de-las-tres-corrientes-doctor-molvius.md",
+        "eraSlug": "era-3",
+        "title": "La tesis de las tres corrientes (Doctor Molvius)",
+        "hitoId": "H-038",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "039-consolidacion-de-miembros-observadores-en-la-sociedad-de-estados.md",
+        "eraSlug": "era-3",
+        "title": "Consolidación de miembros observadores en la Sociedad de Estados",
+        "hitoId": "H-039",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "040-la-paz-cohesionada-por-la-sociedad-de-estados.md",
+        "eraSlug": "era-3",
+        "title": "La paz cohesionada por la Sociedad de Estados",
+        "hitoId": "H-040",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "041-ummah-y-aether-son-aceptados-como-miembros-plenos-en-la-sociedad-de-estados.md",
+        "eraSlug": "era-3",
+        "title": "Ummah y Aether son aceptados como miembros plenos en la Sociedad de Estados",
+        "hitoId": "H-041",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "042-fin-de-los-programas-nueva-casa.md",
+        "eraSlug": "era-4",
+        "title": "Fín de los programas nueva casa.",
+        "hitoId": "H-042",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "043-limpieza-de-los-paramos-soberania-de-aether-y-nacional.md",
+        "eraSlug": "era-4",
+        "title": "Limpieza de los páramos, soberanía de Aether y nacional",
+        "hitoId": "H-043",
+        "issues": []
+      },
+      {
+        "kind": "hito",
+        "fileName": "044-llamado-a-la-cumbre-global-de-restauracion-terrestre-2100.md",
+        "eraSlug": "era-4",
+        "title": "Llamado a la cumbre global de restauración terrestre 2100",
+        "hitoId": "H-044",
+        "issues": []
+      }
+    ],
+    "countries": [
+      {
+        "kind": "country",
+        "fileName": "001-aether.md",
+        "name": "AETHER",
+        "displayName": "AETHER",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "002-argentina.md",
+        "name": "ARGENTINA",
+        "displayName": "ARGENTINA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "003-brasil.md",
+        "name": "Brasil",
+        "displayName": "BRASIL",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "004-canada.md",
+        "name": "Canadá",
+        "displayName": "CANADÁ",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "005-chile.md",
+        "name": "Chile",
+        "displayName": "CHILE",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "006-china.md",
+        "name": "China",
+        "displayName": "CHINA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "007-colombia.md",
+        "name": "COLOMBIA",
+        "displayName": "COLOMBIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "008-confederacion-del-congo-central.md",
+        "name": "Confederación del Congo Central",
+        "displayName": "CONFEDERACIÓN DEL CONGO CENTRAL",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "009-confederacion-germana.md",
+        "name": "Confederación Germana",
+        "displayName": "CONFEDERACIÓN GERMANA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "010-confederacion-saheliana.md",
+        "name": "Confederación Saheliana",
+        "displayName": "CONFEDERACIÓN SAHELIANA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "011-estados-unidos-del-este.md",
+        "name": "Estados Unidos del Este",
+        "displayName": "ESTADOS UNIDOS DEL ESTE",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "012-estados-unidos-del-oeste.md",
+        "name": "Estados Unidos del Oeste",
+        "displayName": "ESTADOS UNIDOS DEL OESTE",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "013-egipto.md",
+        "name": "Egipto",
+        "displayName": "EGIPTO",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "014-espana.md",
+        "name": "España",
+        "displayName": "ESPAÑA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "015-francia.md",
+        "name": "Francia",
+        "displayName": "FRANCIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "016-india.md",
+        "name": "India",
+        "displayName": "INDIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "017-iran.md",
+        "name": "Irán",
+        "displayName": "IRÁN",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "018-italia.md",
+        "name": "Italia",
+        "displayName": "ITALIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "019-japon.md",
+        "name": "Japón",
+        "displayName": "JAPÓN",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "020-nueva-judea-israel.md",
+        "name": "Nueva Judea/Israel",
+        "displayName": "NUEVA JUDEA/ISRAEL",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "021-liga-arabe.md",
+        "name": "Liga Arabe",
+        "displayName": "LIGA ARABE",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "022-liga-balcanica.md",
+        "name": "Liga balcánica",
+        "displayName": "LIGA BALCÁNICA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "023-mexico.md",
+        "name": "México",
+        "displayName": "MÉXICO",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "024-pakistan.md",
+        "name": "Pakistán",
+        "displayName": "PAKISTÁN",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "025-reino-unido.md",
+        "name": "Reino Unido",
+        "displayName": "REINO UNIDO",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "026-rusia.md",
+        "name": "Rusia",
+        "displayName": "RUSIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "027-somalia.md",
+        "name": "Somalia",
+        "displayName": "SOMALIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "028-sudafrica.md",
+        "name": "Sudáfrica",
+        "displayName": "SUDÁFRICA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "029-turquia.md",
+        "name": "Turquía",
+        "displayName": "TURQUÍA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "030-ucrania.md",
+        "name": "Ucrania",
+        "displayName": "UCRANIA",
+        "issues": []
+      },
+      {
+        "kind": "country",
+        "fileName": "031-ummah.md",
+        "name": "Ummah",
+        "displayName": "Ummah",
+        "issues": []
+      }
+    ]
+  }
+}

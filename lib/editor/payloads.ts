@@ -1,4 +1,17 @@
-import type { Article, ArticleStatus, ArticleType, Country, CountryScore } from "@/types/wiki";
+import { normalizeCountryOrganMemberships } from "@/lib/country-organs";
+import { defaultPublicWikiCopy } from "@/lib/site-config/defaults";
+import type {
+  Article,
+  ArticleStatus,
+  ArticleType,
+  Bloc,
+  Category,
+  Country,
+  CountryScore,
+  PublicWikiCopy,
+  TimelineEra,
+  WikiSiteConfig
+} from "@/types/wiki";
 
 const articleTypes: ArticleType[] = [
   "event",
@@ -124,7 +137,52 @@ export function parseCountryPayload(input: unknown):
       summary: normalizeString(payload.summary) ?? "",
       profileMarkdown: normalizeString(payload.profileMarkdown) ?? "",
       flagUrl: normalizeString(payload.flagUrl) ?? undefined,
+      mapUrl: normalizeString(payload.mapUrl) ?? undefined,
+      organMemberships: normalizeCountryOrganMemberships(payload.organMemberships as Country["organMemberships"]) ?? [],
       scores: scores.value
+    }
+  };
+}
+
+export function parseSiteConfigPayload(input: unknown):
+  | { success: true; value: WikiSiteConfig }
+  | { success: false; error: string } {
+  if (!input || typeof input !== "object") {
+    return { success: false, error: "Payload de configuración inválido." };
+  }
+
+  const payload = input as Record<string, unknown>;
+  const eras = parseTimelineEras(payload.eras);
+
+  if (!eras.success) {
+    return eras;
+  }
+
+  const categories = parseCategories(payload.categories);
+
+  if (!categories.success) {
+    return categories;
+  }
+
+  const blocs = parseBlocs(payload.blocs);
+
+  if (!blocs.success) {
+    return blocs;
+  }
+
+  const copy = parsePublicWikiCopy(payload.copy);
+
+  if (!copy.success) {
+    return copy;
+  }
+
+  return {
+    success: true,
+    value: {
+      eras: eras.value,
+      categories: categories.value,
+      blocs: blocs.value,
+      copy: copy.value
     }
   };
 }
@@ -215,6 +273,10 @@ function normalizeRequiredString(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function normalizeOptionalString(value: unknown) {
+  return typeof value === "string" ? value.trim() : undefined;
+}
+
 function normalizeOptionalNumber(value: unknown) {
   if (value === null || value === undefined || value === "") {
     return undefined;
@@ -254,6 +316,299 @@ function normalizeInfobox(value: unknown) {
 
 function normalizeTrend(value: unknown) {
   return trendDirections.find((item) => item === value);
+}
+
+function parseTimelineEras(input: unknown):
+  | { success: true; value: TimelineEra[] }
+  | { success: false; error: string } {
+  if (!Array.isArray(input) || input.length === 0) {
+    return { success: false, error: "Debes enviar al menos una era." };
+  }
+
+  const eras: TimelineEra[] = [];
+  const slugs = new Set<string>();
+  const numbers = new Set<number>();
+
+  for (const [index, item] of input.entries()) {
+    if (!item || typeof item !== "object") {
+      return { success: false, error: `La era #${index + 1} es inválida.` };
+    }
+
+    const payload = item as Record<string, unknown>;
+    const slug = normalizeRequiredString(payload.slug);
+    const name = normalizeRequiredString(payload.name);
+    const color = normalizeRequiredString(payload.color);
+    const number = normalizeOptionalNumber(payload.number);
+    const yearStart = normalizeOptionalNumber(payload.yearStart);
+    const yearEnd = normalizeOptionalNumber(payload.yearEnd);
+
+    if (!slug || !name || !color || number === undefined || yearStart === undefined || yearEnd === undefined) {
+      return {
+        success: false,
+        error: `La era #${index + 1} debe incluir slug, número, nombre, años y color.`
+      };
+    }
+
+    if (slugs.has(slug)) {
+      return { success: false, error: `La era con slug ${slug} está duplicada.` };
+    }
+
+    if (numbers.has(number)) {
+      return { success: false, error: `El número de era ${number} está duplicado.` };
+    }
+
+    if (yearEnd < yearStart) {
+      return {
+        success: false,
+        error: `La era ${name} no puede tener un año final menor al inicial.`
+      };
+    }
+
+    slugs.add(slug);
+    numbers.add(number);
+    eras.push({
+      slug,
+      number,
+      name,
+      yearStart,
+      yearEnd,
+      theme: normalizeOptionalString(payload.theme) ?? "",
+      description: normalizeOptionalString(payload.description) ?? "",
+      color
+    });
+  }
+
+  return { success: true, value: eras };
+}
+
+function parseCategories(input: unknown):
+  | { success: true; value: Category[] }
+  | { success: false; error: string } {
+  if (!Array.isArray(input) || input.length === 0) {
+    return { success: false, error: "Debes enviar al menos una categoría." };
+  }
+
+  const categories: Category[] = [];
+  const slugs = new Set<string>();
+
+  for (const [index, item] of input.entries()) {
+    if (!item || typeof item !== "object") {
+      return { success: false, error: `La categoría #${index + 1} es inválida.` };
+    }
+
+    const payload = item as Record<string, unknown>;
+    const slug = normalizeRequiredString(payload.slug);
+    const name = normalizeRequiredString(payload.name);
+
+    if (!slug || !name) {
+      return { success: false, error: `La categoría #${index + 1} debe incluir slug y nombre.` };
+    }
+
+    if (slugs.has(slug)) {
+      return { success: false, error: `La categoría con slug ${slug} está duplicada.` };
+    }
+
+    slugs.add(slug);
+    categories.push({
+      slug,
+      name,
+      description: normalizeOptionalString(payload.description) ?? "",
+      icon: normalizeOptionalString(payload.icon) ?? undefined
+    });
+  }
+
+  return { success: true, value: categories };
+}
+
+function parseBlocs(input: unknown):
+  | { success: true; value: Bloc[] }
+  | { success: false; error: string } {
+  if (!Array.isArray(input) || input.length === 0) {
+    return { success: false, error: "Debes enviar al menos un bloque." };
+  }
+
+  const blocs: Bloc[] = [];
+  const slugs = new Set<string>();
+
+  for (const [index, item] of input.entries()) {
+    if (!item || typeof item !== "object") {
+      return { success: false, error: `El bloque #${index + 1} es inválido.` };
+    }
+
+    const payload = item as Record<string, unknown>;
+    const slug = normalizeRequiredString(payload.slug);
+    const name = normalizeRequiredString(payload.name);
+    const color = normalizeRequiredString(payload.color);
+
+    if (!slug || !name || !color) {
+      return { success: false, error: `El bloque #${index + 1} debe incluir slug, nombre y color.` };
+    }
+
+    if (slugs.has(slug)) {
+      return { success: false, error: `El bloque con slug ${slug} está duplicado.` };
+    }
+
+    slugs.add(slug);
+    blocs.push({
+      slug,
+      name,
+      summary: normalizeOptionalString(payload.summary) ?? "",
+      color
+    });
+  }
+
+  return { success: true, value: blocs };
+}
+
+function parsePublicWikiCopy(input: unknown):
+  | { success: true; value: PublicWikiCopy }
+  | { success: false; error: string } {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { success: false, error: "La configuración pública debe incluir un bloque copy válido." };
+  }
+
+  const payload = input as Record<string, unknown>;
+  const shell = parseStringSection(
+    payload.shell,
+    Object.keys(defaultPublicWikiCopy.shell),
+    "shell"
+  );
+
+  if (!shell.success) {
+    return shell;
+  }
+
+  const home = parseStringSection(payload.home, Object.keys(defaultPublicWikiCopy.home), "home");
+
+  if (!home.success) {
+    return home;
+  }
+
+  const timeline = parseStringSection(
+    payload.timeline,
+    Object.keys(defaultPublicWikiCopy.timeline),
+    "timeline"
+  );
+
+  if (!timeline.success) {
+    return timeline;
+  }
+
+  const search = parseStringSection(payload.search, Object.keys(defaultPublicWikiCopy.search), "search");
+
+  if (!search.success) {
+    return search;
+  }
+
+  const countries = parseStringSection(
+    payload.countries,
+    Object.keys(defaultPublicWikiCopy.countries),
+    "countries"
+  );
+
+  if (!countries.success) {
+    return countries;
+  }
+
+  const countryPage = parseStringSection(
+    payload.countryPage,
+    Object.keys(defaultPublicWikiCopy.countryPage),
+    "countryPage"
+  );
+
+  if (!countryPage.success) {
+    return countryPage;
+  }
+
+  const countryScorecard = parseStringSection(
+    payload.countryScorecard,
+    Object.keys(defaultPublicWikiCopy.countryScorecard),
+    "countryScorecard"
+  );
+
+  if (!countryScorecard.success) {
+    return countryScorecard;
+  }
+
+  const countryPresenceBoard = parseStringSection(
+    payload.countryPresenceBoard,
+    Object.keys(defaultPublicWikiCopy.countryPresenceBoard),
+    "countryPresenceBoard"
+  );
+
+  if (!countryPresenceBoard.success) {
+    return countryPresenceBoard;
+  }
+
+  const eraPage = parseStringSection(
+    payload.eraPage,
+    Object.keys(defaultPublicWikiCopy.eraPage),
+    "eraPage"
+  );
+
+  if (!eraPage.success) {
+    return eraPage;
+  }
+
+  const categoryPage = parseStringSection(
+    payload.categoryPage,
+    Object.keys(defaultPublicWikiCopy.categoryPage),
+    "categoryPage"
+  );
+
+  if (!categoryPage.success) {
+    return categoryPage;
+  }
+
+  const articlePage = parseStringSection(
+    payload.articlePage,
+    Object.keys(defaultPublicWikiCopy.articlePage),
+    "articlePage"
+  );
+
+  if (!articlePage.success) {
+    return articlePage;
+  }
+
+  return {
+    success: true,
+    value: {
+      shell: shell.value as unknown as PublicWikiCopy["shell"],
+      home: home.value as unknown as PublicWikiCopy["home"],
+      timeline: timeline.value as unknown as PublicWikiCopy["timeline"],
+      search: search.value as unknown as PublicWikiCopy["search"],
+      countries: countries.value as unknown as PublicWikiCopy["countries"],
+      countryPage: countryPage.value as unknown as PublicWikiCopy["countryPage"],
+      countryScorecard: countryScorecard.value as unknown as PublicWikiCopy["countryScorecard"],
+      countryPresenceBoard: countryPresenceBoard.value as unknown as PublicWikiCopy["countryPresenceBoard"],
+      eraPage: eraPage.value as unknown as PublicWikiCopy["eraPage"],
+      categoryPage: categoryPage.value as unknown as PublicWikiCopy["categoryPage"],
+      articlePage: articlePage.value as unknown as PublicWikiCopy["articlePage"]
+    }
+  };
+}
+
+function parseStringSection<T extends Record<string, string>>(
+  input: unknown,
+  keys: string[],
+  label: string
+): { success: true; value: T } | { success: false; error: string } {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { success: false, error: `La sección ${label} es inválida.` };
+  }
+
+  const payload = input as Record<string, unknown>;
+  const section: Record<string, string> = {};
+
+  for (const key of keys) {
+    if (typeof payload[key] !== "string") {
+      return { success: false, error: `El campo ${label}.${key} debe ser un texto.` };
+    }
+
+    section[key] = payload[key] as string;
+  }
+
+  return { success: true, value: section as T };
 }
 
 function normalizeScore(value: unknown) {

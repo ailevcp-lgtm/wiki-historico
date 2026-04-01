@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
   try {
     const saved = await saveArticle(parsed.value);
-    revalidateArticlePaths(saved);
+    await revalidateArticlePaths(saved);
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json(
@@ -45,7 +45,11 @@ export async function POST(request: Request) {
   }
 }
 
-function revalidateArticlePaths(article: { slug: string; categorySlugs: string[]; eraSlug?: string }) {
+async function revalidateArticlePaths(article: {
+  slug: string;
+  categorySlugs: string[];
+  eraSlug?: string;
+}) {
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/search");
@@ -61,7 +65,7 @@ function revalidateArticlePaths(article: { slug: string; categorySlugs: string[]
     revalidatePath(`/category/${categorySlug}`);
   }
 
-  const navigation = getNavigationData();
+  const navigation = await getNavigationData();
 
   for (const era of navigation.eras) {
     revalidatePath(`/era/${era.slug}`);

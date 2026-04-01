@@ -48,6 +48,7 @@ export async function PUT(
 
 function revalidateCountryPaths(slug: string) {
   revalidatePath("/");
+  revalidatePath("/countries");
   revalidatePath("/admin/countries");
   revalidatePath(`/admin/countries/${slug}`);
   revalidatePath(`/country/${slug}`);

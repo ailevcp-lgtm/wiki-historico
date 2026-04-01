@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 
 import { WikiShell } from "@/components/wiki-shell";
-import { getNavigationData } from "@/lib/repository";
+import { getNavigationData, getPublicWikiCopy } from "@/lib/repository";
 
-export default function WikiLayout({
+export default async function WikiLayout({
   children
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const navigation = getNavigationData();
+  const [navigation, copy] = await Promise.all([getNavigationData(), getPublicWikiCopy()]);
 
-  return <WikiShell {...navigation}>{children}</WikiShell>;
+  return <WikiShell {...navigation} copy={copy.shell}>{children}</WikiShell>;
 }

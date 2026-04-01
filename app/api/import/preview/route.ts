@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { requireEditorApiAccess } from "@/lib/editor/auth";
-import { extractDocxText } from "@/lib/import/docx";
 import { parseCeaDocumentText } from "@/lib/import/cea-parser";
+import { detectImportSourceFormat, extractImportText } from "@/lib/import/source-text";
 
 export const runtime = "nodejs";
 
@@ -18,14 +18,14 @@ export async function POST(request: Request) {
 
   if (!(file instanceof File)) {
     return NextResponse.json(
-      { error: "Debes adjuntar un archivo .docx para generar la vista previa." },
+      { error: "Debes adjuntar un archivo .docx o .md para generar la vista previa." },
       { status: 400 }
     );
   }
 
-  if (!file.name.toLowerCase().endsWith(".docx")) {
+  if (!detectImportSourceFormat(file.name)) {
     return NextResponse.json(
-      { error: "Por ahora el importador solo acepta archivos .docx." },
+      { error: "Por ahora el importador solo acepta archivos .docx o .md." },
       { status: 400 }
     );
   }
@@ -39,14 +39,14 @@ export async function POST(request: Request) {
 
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const rawText = await extractDocxText(Buffer.from(arrayBuffer));
+    const rawText = await extractImportText(Buffer.from(arrayBuffer), file.name);
     const preview = parseCeaDocumentText(rawText, file.name);
 
     return NextResponse.json(preview);
   } catch (error) {
     return NextResponse.json(
       {
-        error: "No pude leer el archivo .docx.",
+        error: "No pude leer el archivo fuente.",
         detail: error instanceof Error ? error.message : "Error desconocido"
       },
       { status: 500 }

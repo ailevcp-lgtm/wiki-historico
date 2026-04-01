@@ -35,7 +35,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Artículo no encontrado." }, { status: 404 });
     }
 
-    revalidateArticlePaths(updated.slug, updated.categorySlugs, updated.eraSlug);
+    await revalidateArticlePaths(updated.slug, updated.categorySlugs, updated.eraSlug);
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json(
@@ -74,7 +74,7 @@ export async function PUT(
 
   try {
     const saved = await saveArticle(parsed.value);
-    revalidateArticlePaths(saved.slug, saved.categorySlugs, saved.eraSlug);
+    await revalidateArticlePaths(saved.slug, saved.categorySlugs, saved.eraSlug);
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json(
@@ -87,7 +87,7 @@ export async function PUT(
   }
 }
 
-function revalidateArticlePaths(slug: string, categorySlugs: string[], eraSlug?: string) {
+async function revalidateArticlePaths(slug: string, categorySlugs: string[], eraSlug?: string) {
   revalidatePath("/");
   revalidatePath("/timeline");
   revalidatePath("/search");
@@ -103,7 +103,7 @@ function revalidateArticlePaths(slug: string, categorySlugs: string[], eraSlug?:
     revalidatePath(`/category/${categorySlug}`);
   }
 
-  const navigation = getNavigationData();
+  const navigation = await getNavigationData();
 
   for (const era of navigation.eras) {
     revalidatePath(`/era/${era.slug}`);

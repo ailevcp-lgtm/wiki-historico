@@ -1,9 +1,10 @@
 import Link from "next/link";
 
+import { CountryOrganSummary, CountryPresenceBoard } from "@/components/country-presence-board";
 import { EditorAccessNotice } from "@/components/editor-access-notice";
 import { EditorAuthRequired } from "@/components/editor-auth-required";
 import { requireEditorPageAccess } from "@/lib/editor/auth";
-import { getAllCountries } from "@/lib/repository";
+import { getCountryDirectory } from "@/lib/repository";
 import { humanizeSlug } from "@/lib/utils";
 
 export default async function AdminCountriesPage() {
@@ -13,7 +14,7 @@ export default async function AdminCountriesPage() {
     return <EditorAuthRequired access={access} />;
   }
 
-  const countries = await getAllCountries();
+  const countries = await getCountryDirectory();
 
   return (
     <section className="space-y-6">
@@ -38,6 +39,20 @@ export default async function AdminCountriesPage() {
       </header>
 
       <section className="wiki-paper p-5 md:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-2xl">Matriz de presencia</h2>
+            <p className="mt-2 text-sm text-wiki-muted">
+              Vista rápida de la lista completa importada desde CSV. Cada fila abre la edición del país.
+            </p>
+          </div>
+          <span className="wiki-badge">{countries.length} países y regiones</span>
+        </div>
+
+        <CountryPresenceBoard countries={countries} hrefPrefix="/admin/countries" />
+      </section>
+
+      <section className="wiki-paper p-5 md:p-6">
         <div className="space-y-4">
           {countries.length === 0 ? (
             <p className="text-wiki-muted">Todavía no hay países o regiones cargados.</p>
@@ -48,6 +63,7 @@ export default async function AdminCountriesPage() {
                   <span className="wiki-badge">
                     {country.bloc ? humanizeSlug(country.bloc) : "sin-bloque"}
                   </span>
+                  <CountryOrganSummary country={country} />
                   <span className="wiki-badge">{country.scores.length} snapshot(s)</span>
                 </div>
                 <div className="mt-3 flex flex-wrap items-start justify-between gap-4">

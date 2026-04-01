@@ -9,3 +9,7 @@ export function getSupabaseAnonKey() {
 export function hasSupabaseBrowserConfig() {
   return Boolean(getSupabaseUrl() && getSupabaseAnonKey());
 }
+
+export function hasSupabaseAdminConfig() {
+  return Boolean(getSupabaseUrl() && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}

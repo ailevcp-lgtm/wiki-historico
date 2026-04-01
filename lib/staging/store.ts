@@ -6,7 +6,8 @@ import path from "path";
 
 import { unstable_noStore as noStore } from "next/cache";
 
-import { createSupabaseAdminClient, hasSupabaseAdminConfig } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { hasSupabaseAdminConfig } from "@/lib/supabase/config";
 import type { ImportPreviewResult } from "@/types/import";
 import type { SourceImportStatus, StagedSourceDocument, StagingMode } from "@/types/staging";
 
@@ -34,7 +35,7 @@ export async function stageImportPreviews(previews: ImportPreviewResult[]): Prom
   const rows = previews.map(previewToRow);
 
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("source_documents")
       .insert(rows.map(stripTimestamps))
@@ -57,7 +58,7 @@ export async function listSourceDocuments(): Promise<StagedSourceDocument[]> {
   noStore();
 
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("source_documents")
       .select("*")
@@ -78,7 +79,7 @@ export async function getSourceDocumentById(id: string): Promise<StagedSourceDoc
   noStore();
 
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("source_documents")
       .select("*")
@@ -102,7 +103,7 @@ export async function updateSourceDocumentStatus(
   importStatus: SourceImportStatus
 ): Promise<StagedSourceDocument | undefined> {
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("source_documents")
       .update({ import_status: importStatus })
@@ -133,6 +134,48 @@ export async function updateSourceDocumentStatus(
   return updated ? mapRow(updated, "local") : undefined;
 }
 
+export async function updateSourceDocumentNormalizedPayload(
+  id: string,
+  normalizedPayload: ImportPreviewResult
+): Promise<StagedSourceDocument | undefined> {
+  const targetSlug = deriveTargetSlug(normalizedPayload);
+
+  if (getStagingMode() === "supabase") {
+    const supabase = await createSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("source_documents")
+      .update({
+        normalized_payload: normalizedPayload,
+        target_slug: targetSlug
+      })
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data ? mapRow(data as SourceDocumentRow, "supabase") : undefined;
+  }
+
+  const rows = await readLocalRows();
+  const nextRows = rows.map((row) =>
+    row.id === id
+      ? {
+          ...row,
+          normalized_payload: normalizedPayload,
+          target_slug: targetSlug,
+          updated_at: new Date().toISOString()
+        }
+      : row
+  );
+
+  await writeLocalRows(nextRows);
+  const updated = nextRows.find((row) => row.id === id);
+  return updated ? mapRow(updated, "local") : undefined;
+}
+
 function previewToRow(preview: ImportPreviewResult): SourceDocumentRow {
   const now = new Date().toISOString();
   const hasErrors = preview.issues.some((issue) => issue.level === "error");
@@ -147,7 +190,7 @@ function previewToRow(preview: ImportPreviewResult): SourceDocumentRow {
   return {
     id: randomUUID(),
     source_name: preview.fileName,
-    source_format: "docx",
+    source_format: inferSourceFormat(preview.fileName),
     detected_kind: preview.kind,
     raw_text: preview.normalizedLines.join("\n"),
     normalized_payload: preview,
@@ -157,6 +200,28 @@ function previewToRow(preview: ImportPreviewResult): SourceDocumentRow {
     created_at: now,
     updated_at: now
   };
+}
+
+function inferSourceFormat(fileName: string) {
+  const normalized = fileName.toLowerCase();
+
+  if (normalized.includes(".md")) {
+    return "md";
+  }
+
+  if (normalized.includes(".docx")) {
+    return "docx";
+  }
+
+  return "text";
+}
+
+function deriveTargetSlug(preview: ImportPreviewResult) {
+  if (preview.kind === "hito" || preview.kind === "country") {
+    return preview.draft.slug;
+  }
+
+  return null;
 }
 
 function mapRow(row: SourceDocumentRow, stagingMode: StagingMode): StagedSourceDocument {

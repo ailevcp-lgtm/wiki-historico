@@ -1,3 +1,7 @@
+import type { ReactNode } from "react";
+
+import { HitoReference } from "@/components/hito-reference";
+import type { HitoReferenceIndex } from "@/lib/hito-references";
 import {
   countryScoreMetrics,
   describeScoreSnapshot,
@@ -8,14 +12,18 @@ import {
   sortCountryScores
 } from "@/lib/country-scores";
 import { humanizeSlug } from "@/lib/utils";
-import type { Country, CountryScore, TimelineEra } from "@/types/wiki";
+import type { Country, CountryScore, CountryScorecardCopy, TimelineEra } from "@/types/wiki";
 
 export function CountryScorecard({
   country,
-  eras
+  copy,
+  eras,
+  hitoArticles
 }: {
   country: Country;
+  copy: CountryScorecardCopy;
   eras: TimelineEra[];
+  hitoArticles: HitoReferenceIndex;
 }) {
   const orderedScores = sortCountryScores(country.scores, eras);
   const latestScore = orderedScores[orderedScores.length - 1];
@@ -23,8 +31,8 @@ export function CountryScorecard({
   if (!latestScore) {
     return (
       <section className="wiki-paper p-4">
-        <h2 className="font-heading text-2xl">Scorecard</h2>
-        <p className="mt-3 text-sm text-wiki-muted">Todavía no hay snapshots cargados para este país.</p>
+        <h2 className="font-heading text-2xl">{copy.emptyTitle}</h2>
+        <p className="mt-3 text-sm text-wiki-muted">{copy.emptyDescription}</p>
       </section>
     );
   }
@@ -34,18 +42,31 @@ export function CountryScorecard({
       <section className="wiki-paper p-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="font-heading text-2xl">Scorecard más reciente</h2>
+            <h2 className="font-heading text-2xl">{copy.latestTitle}</h2>
             <p className="mt-2 text-sm text-wiki-muted">
-              {describeScoreSnapshot(latestScore, eras)}
+              {renderScoreReference(latestScore, eras, hitoArticles)}
             </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
-            <StatCard label="Snapshots" value={String(orderedScores.length)} />
+            <StatCard label={copy.snapshotsLabel} value={String(orderedScores.length)} />
             <StatCard
-              label="Bloque"
-              value={country.bloc ? humanizeSlug(country.bloc) : "Sin bloque"}
+              label={copy.blocLabel}
+              value={country.bloc ? humanizeSlug(country.bloc) : copy.noBlocValue}
             />
-            <StatCard label="Último hito" value={latestScore.hitoId ?? "Sin hito"} />
+            <StatCard
+              label={copy.lastMilestoneLabel}
+              value={
+                latestScore.hitoId ? (
+                  <HitoReference
+                    hitoId={latestScore.hitoId}
+                    hitoArticles={hitoArticles}
+                    missingClassName="text-wiki-text"
+                  />
+                ) : (
+                  copy.noMilestoneValue
+                )
+              }
+            />
           </div>
         </div>
 
@@ -80,12 +101,14 @@ export function CountryScorecard({
       </section>
 
       <section className="wiki-paper p-4">
-        <h2 className="font-heading text-2xl">Historial de snapshots</h2>
+        <h2 className="font-heading text-2xl">{copy.historyTitle}</h2>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead className="bg-wiki-page">
               <tr>
-                <th className="border border-wiki-border px-3 py-2 text-left">Referencia</th>
+                <th className="border border-wiki-border px-3 py-2 text-left">
+                  {copy.referenceColumnLabel}
+                </th>
                 {countryScoreMetrics.map((metric) => (
                   <th key={metric.valueKey} className="border border-wiki-border px-3 py-2 text-left">
                     {metric.shortLabel}
@@ -97,7 +120,7 @@ export function CountryScorecard({
               {orderedScores.map((score) => (
                 <tr key={describeScoreSnapshot(score, eras)}>
                   <td className="border border-wiki-border px-3 py-2 text-wiki-muted">
-                    {describeScoreSnapshot(score, eras)}
+                    {renderScoreReference(score, eras, hitoArticles)}
                   </td>
                   {countryScoreMetrics.map((metric) => {
                     const value = getCountryScoreValue(score, metric.valueKey);
@@ -120,12 +143,37 @@ export function CountryScorecard({
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="rounded-sm border border-wiki-border bg-wiki-page px-3 py-2">
       <div className="text-xs uppercase tracking-[0.12em] text-wiki-muted">{label}</div>
       <div className="mt-1 font-heading text-xl">{value}</div>
     </div>
+  );
+}
+
+function renderScoreReference(
+  score: CountryScore,
+  eras: TimelineEra[],
+  hitoArticles: HitoReferenceIndex
+) {
+  const eraLabel = score.eraSlug
+    ? eras.find((era) => era.slug === score.eraSlug)?.name ?? score.eraSlug
+    : "Sin era";
+
+  if (!score.hitoId) {
+    return eraLabel;
+  }
+
+  return (
+    <>
+      {eraLabel} ·{" "}
+      <HitoReference
+        hitoId={score.hitoId}
+        hitoArticles={hitoArticles}
+        missingClassName="text-wiki-muted"
+      />
+    </>
   );
 }
 

@@ -35,12 +35,40 @@ a {
     @apply text-wiki-blue hover:underline;
   }
 
+  .wiki-link-track {
+    @apply transition-colors hover:underline;
+  }
+
+  .wiki-link-track:hover {
+    color: #0645ad;
+  }
+
+  .wiki-link-track:visited {
+    color: #5a3696;
+  }
+
+  .wiki-link-track.wiki-link-missing:visited {
+    color: #cc2200;
+  }
+
   .wiki-link-missing {
     @apply text-wiki-red;
   }
 
   .wiki-badge {
     @apply inline-flex items-center rounded-sm border border-wiki-border bg-wiki-badge px-2 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-wiki-muted;
+  }
+
+  .wiki-badge-success {
+    @apply inline-flex items-center rounded-sm border px-2 py-1 text-xs font-semibold uppercase tracking-[0.08em];
+    border-color: #2f6f4f;
+    background: #eef8f1;
+    color: #1f5136;
+  }
+
+  .wiki-surface-success {
+    border-color: #7bbf96;
+    background: #f3fbf6;
   }
 
   .wiki-toc {

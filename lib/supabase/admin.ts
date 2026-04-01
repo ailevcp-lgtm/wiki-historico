@@ -1,20 +1,16 @@
 import "server-only";
 
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseUrl, hasSupabaseAdminConfig } from "@/lib/supabase/config";
 
-import { getSupabaseUrl } from "@/lib/supabase/config";
-
-export function hasSupabaseAdminConfig() {
-  return Boolean(getSupabaseUrl() && process.env.SUPABASE_SERVICE_ROLE_KEY);
-}
-
-export function createSupabaseAdminClient() {
+export async function createSupabaseAdminClient() {
   const url = getSupabaseUrl();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url || !key) {
+  if (!hasSupabaseAdminConfig() || !url || !key) {
     throw new Error("Supabase no está configurado para operaciones administrativas.");
   }
+
+  const { createClient } = await import("@supabase/supabase-js");
 
   return createClient(url, key, {
     auth: {

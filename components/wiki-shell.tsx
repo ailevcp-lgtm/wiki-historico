@@ -4,16 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
-import type { Bloc, Category, TimelineEra } from "@/types/wiki";
+import type { Bloc, Category, TimelineEra, WikiShellCopy } from "@/types/wiki";
 
 interface WikiShellProps {
   blocs: Bloc[];
   categories: Category[];
+  copy: WikiShellCopy;
   eras: TimelineEra[];
   children: ReactNode;
 }
 
-export function WikiShell({ blocs, categories, eras, children }: WikiShellProps) {
+export function WikiShell({ blocs, categories, copy, eras, children }: WikiShellProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,22 +32,22 @@ export function WikiShell({ blocs, categories, eras, children }: WikiShellProps)
           </button>
 
           <Link href="/" className="min-w-0">
-            <div className="font-heading text-xl leading-none text-wiki-text">Histórico 2100</div>
-            <div className="text-xs uppercase tracking-[0.18em] text-wiki-muted">Wiki del escenario</div>
+            <div className="font-heading text-xl leading-none text-wiki-text">{copy.siteTitle}</div>
+            <div className="text-xs uppercase tracking-[0.18em] text-wiki-muted">{copy.siteTagline}</div>
           </Link>
 
           <form action="/search" className="ml-auto flex w-full max-w-md items-center gap-2">
             <input
               type="search"
               name="q"
-              placeholder="Buscar artículos, eras o tratados"
+              placeholder={copy.searchPlaceholder}
               className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2 text-sm outline-none ring-0 placeholder:text-wiki-muted focus:border-wiki-blue"
             />
             <button
               type="submit"
               className="rounded-sm border border-wiki-border bg-wiki-page px-3 py-2 text-sm font-semibold"
             >
-              Buscar
+              {copy.searchButtonLabel}
             </button>
           </form>
         </div>
@@ -65,23 +66,30 @@ export function WikiShell({ blocs, categories, eras, children }: WikiShellProps)
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <NavSection title="Navegación">
+          <NavSection title={copy.navigationSectionTitle}>
             <NavItem href="/" active={pathname === "/"} onNavigate={() => setIsOpen(false)}>
-              Portada
+              {copy.homeLabel}
             </NavItem>
             <NavItem
               href="/timeline"
               active={pathname === "/timeline"}
               onNavigate={() => setIsOpen(false)}
             >
-              Timeline
+              {copy.timelineLabel}
             </NavItem>
             <NavItem href="/search" active={pathname === "/search"} onNavigate={() => setIsOpen(false)}>
-              Búsqueda
+              {copy.searchLabel}
+            </NavItem>
+            <NavItem
+              href="/countries"
+              active={pathname === "/countries"}
+              onNavigate={() => setIsOpen(false)}
+            >
+              {copy.countriesLabel}
             </NavItem>
           </NavSection>
 
-          <NavSection title="Eras">
+          <NavSection title={copy.erasSectionTitle}>
             {eras.map((era) => (
               <NavItem
                 key={era.slug}
@@ -89,12 +97,12 @@ export function WikiShell({ blocs, categories, eras, children }: WikiShellProps)
                 active={pathname === `/era/${era.slug}`}
                 onNavigate={() => setIsOpen(false)}
               >
-                Era {era.number} ({era.yearStart}-{era.yearEnd})
+                {copy.eraLabelPrefix} {era.number} ({era.yearStart}-{era.yearEnd})
               </NavItem>
             ))}
           </NavSection>
 
-          <NavSection title="Categorías">
+          <NavSection title={copy.categoriesSectionTitle}>
             {categories.map((category) => (
               <NavItem
                 key={category.slug}
@@ -107,7 +115,7 @@ export function WikiShell({ blocs, categories, eras, children }: WikiShellProps)
             ))}
           </NavSection>
 
-          <NavSection title="Bloques">
+          <NavSection title={copy.blocsSectionTitle}>
             {blocs.map((bloc) => (
               <div key={bloc.slug} className="rounded-sm border border-wiki-border bg-white px-3 py-2 text-sm">
                 <div className="font-semibold text-wiki-text">{bloc.name}</div>

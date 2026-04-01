@@ -47,6 +47,7 @@ export async function POST(request: Request) {
 
 function revalidateCountryPaths(slug: string) {
   revalidatePath("/");
+  revalidatePath("/countries");
   revalidatePath("/admin/countries");
   revalidatePath(`/admin/countries/${slug}`);
   revalidatePath(`/country/${slug}`);

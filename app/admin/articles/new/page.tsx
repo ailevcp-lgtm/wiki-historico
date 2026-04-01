@@ -11,7 +11,7 @@ export default async function AdminNewArticlePage() {
     return <EditorAuthRequired access={access} />;
   }
 
-  const navigation = getNavigationData();
+  const navigation = await getNavigationData();
 
   return (
     <section className="space-y-6">

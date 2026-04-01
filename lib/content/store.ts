@@ -5,10 +5,10 @@ import path from "path";
 
 import { unstable_noStore as noStore } from "next/cache";
 
-import { articles as mockArticles, countries as mockCountries } from "@/lib/mock-data";
+import { mapDraftToArticle, mapDraftToCountry } from "@/lib/content/draft-mappers";
+import { getSeedCountries } from "@/lib/country-directory";
 import { getStagingMode, getSourceDocumentById, updateSourceDocumentStatus } from "@/lib/staging/store";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import type { CountryDraftCandidate, HitoDraftCandidate } from "@/types/import";
 import type { PromotionResult } from "@/types/staging";
 import type { Article, Country, CountryScore } from "@/types/wiki";
 
@@ -46,6 +46,8 @@ type CountryRow = {
   summary: string | null;
   profile_markdown: string | null;
   flag_url: string | null;
+  map_url: string | null;
+  organ_memberships: Country["organMemberships"] | null;
 };
 
 type CountryScoreRow = {
@@ -74,7 +76,7 @@ export async function listPersistedArticles(): Promise<Article[]> {
   noStore();
 
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase.from("articles").select("*");
 
     if (error) {
@@ -92,7 +94,7 @@ export async function listPersistedCountries(): Promise<Country[]> {
   noStore();
 
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data: countryRows, error: countriesError } = await supabase.from("countries").select("*");
 
     if (countriesError) {
@@ -122,12 +124,14 @@ export async function listPersistedCountries(): Promise<Country[]> {
       summary: row.summary ?? "",
       profileMarkdown: row.profile_markdown ?? "",
       flagUrl: row.flag_url ?? undefined,
+      mapUrl: row.map_url ?? undefined,
+      organMemberships: Array.isArray(row.organ_memberships) ? row.organ_memberships : undefined,
       scores: scoresByCountryId.get(row.id) ?? []
     }));
   }
 
   const store = await readLocalStore();
-  return store.countries;
+  return store.countries.map(mapStoredCountry);
 }
 
 export async function promoteSourceDocument(id: string): Promise<PromotionResult> {
@@ -212,7 +216,7 @@ export async function saveCountry(
 
 async function persistArticle(article: Article): Promise<void> {
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { error } = await supabase.from("articles").upsert(
       {
         slug: article.slug,
@@ -249,7 +253,7 @@ async function persistArticle(article: Article): Promise<void> {
 
 async function persistCountry(country: Country): Promise<void> {
   if (getStagingMode() === "supabase") {
-    const supabase = createSupabaseAdminClient();
+    const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("countries")
       .upsert(
@@ -259,7 +263,9 @@ async function persistCountry(country: Country): Promise<void> {
           bloc: country.bloc ?? null,
           summary: country.summary,
           profile_markdown: country.profileMarkdown,
-          flag_url: country.flagUrl ?? null
+          flag_url: country.flagUrl ?? null,
+          map_url: country.mapUrl ?? null,
+          organ_memberships: country.organMemberships ?? null
         },
         { onConflict: "slug" }
       )
@@ -300,12 +306,17 @@ async function persistCountry(country: Country): Promise<void> {
 
 async function findStoredArticleBySlug(slug: string): Promise<Article | undefined> {
   const persisted = await listPersistedArticles();
-  return persisted.find((article) => article.slug === slug) ?? mockArticles.find((article) => article.slug === slug);
+  return persisted.find((article) => article.slug === slug);
 }
 
 async function findStoredCountryBySlug(slug: string): Promise<Country | undefined> {
   const persisted = await listPersistedCountries();
-  return persisted.find((country) => country.slug === slug) ?? mockCountries.find((country) => country.slug === slug);
+  const seededCountries = await getSeedCountries();
+
+  return (
+    persisted.find((country) => country.slug === slug) ??
+    seededCountries.find((country) => country.slug === slug)
+  );
 }
 
 async function readLocalStore(): Promise<LocalWikiStore> {
@@ -336,6 +347,14 @@ async function ensureLocalStore(): Promise<void> {
 function upsertBySlug<T extends { slug: string }>(items: T[], nextItem: T): T[] {
   const remaining = items.filter((item) => item.slug !== nextItem.slug);
   return [nextItem, ...remaining];
+}
+
+function mapStoredCountry(country: Country): Country {
+  return {
+    ...country,
+    mapUrl: country.mapUrl ?? undefined,
+    organMemberships: Array.isArray(country.organMemberships) ? country.organMemberships : undefined
+  };
 }
 
 function mapArticleRow(row: ArticleRow): Article {
@@ -381,95 +400,6 @@ function mapCountryScoreRow(row: CountryScoreRow): CountryScore {
   };
 }
 
-function mapDraftToArticle(draft: HitoDraftCandidate): Article {
-  return {
-    slug: draft.slug,
-    title: draft.title,
-    type: draft.type,
-    content: draft.markdown,
-    summary: draft.summary,
-    infobox: draft.infobox,
-    categorySlugs: draft.categorySlugs,
-    relatedSlugs: [],
-    eraSlug: draft.eraSlug,
-    hitoId: draft.hitoId,
-    yearStart: draft.yearStart,
-    yearEnd: draft.yearEnd,
-    status: "review",
-    author: "Importador CEA"
-  };
-}
-
-function mapDraftToCountry(draft: CountryDraftCandidate): Country {
-  return {
-    slug: draft.slug,
-    name: draft.name,
-    bloc: draft.bloc,
-    summary: draft.summary,
-    profileMarkdown: draft.profileMarkdown,
-    scores: [mapDraftScores(draft)]
-  };
-}
-
-function mapDraftScores(draft: CountryDraftCandidate): CountryScore {
-  const scoreMap = new Map(
-    draft.scores.map((score) => [normalizeVariableLabel(score.variable), score])
-  );
-
-  const notes = draft.scores
-    .map((score) => (score.notes ? `${score.variable}: ${score.notes}` : ""))
-    .filter(Boolean)
-    .join("\n");
-
-  return {
-    eraSlug: draft.eraSlug,
-    hitoId: draft.hitoReference,
-    climateExposure: scoreMap.get("climate_exposure")?.score,
-    stateCapacity: scoreMap.get("state_capacity")?.score,
-    powerResources: scoreMap.get("power_resources")?.score,
-    techDependency: scoreMap.get("tech_dependency")?.score,
-    demographicPressure: scoreMap.get("demographic_pressure")?.score,
-    socialCohesion: scoreMap.get("social_cohesion")?.score,
-    economicVulnerability: scoreMap.get("economic_vulnerability")?.score,
-    climateTrend: scoreMap.get("climate_exposure")?.trend,
-    stateTrend: scoreMap.get("state_capacity")?.trend,
-    powerTrend: scoreMap.get("power_resources")?.trend,
-    techTrend: scoreMap.get("tech_dependency")?.trend,
-    demographicTrend: scoreMap.get("demographic_pressure")?.trend,
-    socialTrend: scoreMap.get("social_cohesion")?.trend,
-    economicTrend: scoreMap.get("economic_vulnerability")?.trend,
-    notes: notes || undefined
-  };
-}
-
-function normalizeVariableLabel(value: string): string {
-  if (value.includes("Exposición climática")) {
-    return "climate_exposure";
-  }
-
-  if (value.includes("Capacidad estatal")) {
-    return "state_capacity";
-  }
-
-  if (value.includes("Recursos de poder")) {
-    return "power_resources";
-  }
-
-  if (value.includes("Dependencia tech externa")) {
-    return "tech_dependency";
-  }
-
-  if (value.includes("Presión demográfica")) {
-    return "demographic_pressure";
-  }
-
-  if (value.includes("Cohesión social")) {
-    return "social_cohesion";
-  }
-
-  return "economic_vulnerability";
-}
-
 function countryScoreKey(score: CountryScore): string {
   return `${score.eraSlug ?? "sin-era"}::${score.hitoId ?? "sin-hito"}`;
 }
@@ -499,13 +429,13 @@ function mapCountryScoreForInsert(score: CountryScore, countryId: string) {
     country_id: countryId,
     hito_id: score.hitoId ?? null,
     era_slug: score.eraSlug ?? null,
-    climate_exposure: score.climateExposure ?? null,
-    state_capacity: score.stateCapacity ?? null,
-    power_resources: score.powerResources ?? null,
-    tech_dependency: score.techDependency ?? null,
-    demographic_pressure: score.demographicPressure ?? null,
-    social_cohesion: score.socialCohesion ?? null,
-    economic_vulnerability: score.economicVulnerability ?? null,
+    climate_exposure: normalizeCountryScoreValue(score.climateExposure),
+    state_capacity: normalizeCountryScoreValue(score.stateCapacity),
+    power_resources: normalizeCountryScoreValue(score.powerResources),
+    tech_dependency: normalizeCountryScoreValue(score.techDependency),
+    demographic_pressure: normalizeCountryScoreValue(score.demographicPressure),
+    social_cohesion: normalizeCountryScoreValue(score.socialCohesion),
+    economic_vulnerability: normalizeCountryScoreValue(score.economicVulnerability),
     climate_trend: score.climateTrend ?? null,
     state_trend: score.stateTrend ?? null,
     power_trend: score.powerTrend ?? null,
@@ -515,4 +445,12 @@ function mapCountryScoreForInsert(score: CountryScore, countryId: string) {
     economic_trend: score.economicTrend ?? null,
     notes: score.notes ?? null
   };
+}
+
+function normalizeCountryScoreValue(value?: number) {
+  if (value === undefined || value < 1 || value > 5) {
+    return null;
+  }
+
+  return value;
 }

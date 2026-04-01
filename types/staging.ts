@@ -26,3 +26,15 @@ export interface PromotionResult {
   targetPath: string;
   destinationMode: StagingMode;
 }
+
+export interface BatchPromotionFailure {
+  documentId: string;
+  sourceName?: string;
+  detail: string;
+}
+
+export interface BatchPromotionResult {
+  requestedCount: number;
+  promoted: PromotionResult[];
+  failed: BatchPromotionFailure[];
+}

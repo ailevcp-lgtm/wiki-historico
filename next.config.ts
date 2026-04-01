@@ -1,3 +1,4 @@
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 import type { NextConfig } from "next";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,10 +21,13 @@ if (supabaseUrl) {
   });
 }
 
-const nextConfig: NextConfig = {
+const nextConfig = (phase: string): NextConfig => ({
+  // Keep dev output separate so a running `next dev` instance does not corrupt
+  // production builds or `next start` artifacts under `.next`.
+  distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
   images: {
     remotePatterns
   }
-};
+});
 
 export default nextConfig;

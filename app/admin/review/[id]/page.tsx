@@ -4,8 +4,15 @@ import { notFound } from "next/navigation";
 import { EditorAccessNotice } from "@/components/editor-access-notice";
 import { EditorAuthRequired } from "@/components/editor-auth-required";
 import { PromoteSourceDocumentButton } from "@/components/promote-source-document-button";
+import { StagedDocumentReview } from "@/components/staged-document-review";
 import { SourceDocumentStatusForm } from "@/components/source-document-status-form";
 import { requireEditorPageAccess } from "@/lib/editor/auth";
+import {
+  getArticleHitoIndex,
+  getArticleIndex,
+  getNavigationData,
+  getPublicWikiCopy
+} from "@/lib/repository";
 import { getSourceDocumentById } from "@/lib/staging/store";
 
 export default async function AdminReviewDetailPage({
@@ -24,6 +31,13 @@ export default async function AdminReviewDetailPage({
   if (!document) {
     notFound();
   }
+
+  const [articleTitles, hitoArticles, navigation, copy] = await Promise.all([
+    getArticleIndex({ includeDrafts: true }),
+    getArticleHitoIndex({ includeDrafts: true, hrefMode: "editor" }),
+    getNavigationData(),
+    getPublicWikiCopy()
+  ]);
 
   return (
     <div className="space-y-6">
@@ -70,12 +84,14 @@ export default async function AdminReviewDetailPage({
         </section>
       ) : null}
 
-      <section className="wiki-paper p-5 md:p-6">
-        <h2 className="font-heading text-2xl">Payload normalizado</h2>
-        <pre className="mt-4 overflow-x-auto rounded-sm border border-wiki-border bg-wiki-page p-4 text-sm whitespace-pre-wrap">
-          {JSON.stringify(document.normalizedPayload, null, 2)}
-        </pre>
-      </section>
+      <StagedDocumentReview
+        articleTitles={articleTitles}
+        hitoArticles={hitoArticles}
+        blocs={navigation.blocs}
+        copy={copy}
+        document={document}
+        eras={navigation.eras}
+      />
 
       <section className="wiki-paper p-5 md:p-6">
         <h2 className="font-heading text-2xl">Texto fuente normalizado</h2>

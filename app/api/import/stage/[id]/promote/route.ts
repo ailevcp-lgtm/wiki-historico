@@ -29,6 +29,7 @@ export async function POST(
     revalidatePath("/admin/review");
     revalidatePath(`/admin/review/${id}`);
     if (result.detectedKind === "country") {
+      revalidatePath("/countries");
       revalidatePath(result.targetPath);
       revalidatePath(`/country/${result.targetSlug}`);
     }

@@ -26,11 +26,14 @@ export function PromoteSourceDocumentButton({
       const response = await fetch(`/api/import/stage/${documentId}/promote`, {
         method: "POST"
       });
-      const payload = (await response.json()) as PromotionResult & { error?: string };
+      const payload = (await response.json()) as PromotionResult & {
+        error?: string;
+        detail?: string;
+      };
 
       if (!response.ok) {
         setResult(null);
-        setMessage(payload.error ?? "No se pudo promover la ficha.");
+        setMessage(payload.detail ?? payload.error ?? "No se pudo promover la ficha.");
         return;
       }
 

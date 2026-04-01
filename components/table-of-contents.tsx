@@ -2,16 +2,17 @@ import type { NavHeading } from "@/types/wiki";
 
 interface TableOfContentsProps {
   headings: NavHeading[];
+  title?: string;
 }
 
-export function TableOfContents({ headings }: TableOfContentsProps) {
+export function TableOfContents({ headings, title = "Contenido" }: TableOfContentsProps) {
   if (headings.length === 0) {
     return null;
   }
 
   return (
     <nav className="wiki-toc">
-      <div className="wiki-toc-title">Contenido</div>
+      <div className="wiki-toc-title">{title}</div>
       <ol className="space-y-1 text-sm text-wiki-text">
         {headings.map((heading) => (
           <li key={heading.id} className={heading.depth === 3 ? "pl-4" : ""}>

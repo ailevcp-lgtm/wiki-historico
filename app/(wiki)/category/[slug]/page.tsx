@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getArticlesByCategory, getCategoryBySlug, getNavigationData } from "@/lib/repository";
+import {
+  getArticlesByCategory,
+  getCategoryBySlug,
+  getNavigationData,
+  getPublicWikiCopy
+} from "@/lib/repository";
 
-export function generateStaticParams() {
-  return getNavigationData().categories.map((category) => ({ slug: category.slug }));
+export async function generateStaticParams() {
+  return (await getNavigationData()).categories.map((category) => ({ slug: category.slug }));
 }
 
 export default async function CategoryPage({
@@ -13,18 +18,21 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const category = getCategoryBySlug(resolvedParams.slug);
+  const category = await getCategoryBySlug(resolvedParams.slug);
 
   if (!category) {
     notFound();
   }
 
-  const articles = await getArticlesByCategory(category.slug);
+  const [articles, copy] = await Promise.all([
+    getArticlesByCategory(category.slug),
+    getPublicWikiCopy()
+  ]);
 
   return (
     <section className="wiki-paper p-5 md:p-6">
       <header className="border-b border-wiki-border pb-5">
-        <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">Categoría</p>
+        <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">{copy.categoryPage.eyebrow}</p>
         <h1 className="wiki-page-title mt-2">{category.name}</h1>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-wiki-muted">{category.description}</p>
       </header>
@@ -37,7 +45,7 @@ export default async function CategoryPage({
               {article.yearStart ? <span className="wiki-badge">{article.yearStart}</span> : null}
             </div>
             <h2 className="mt-3 font-heading text-2xl">
-              <Link href={`/article/${article.slug}`} className="hover:text-wiki-blue">
+              <Link href={`/article/${article.slug}`} className="wiki-link-track">
                 {article.title}
               </Link>
             </h2>

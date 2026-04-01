@@ -10,6 +10,7 @@ interface AdminShellProps {
 
 const adminNav = [
   { href: "/admin", label: "Dashboard" },
+  { href: "/admin/config", label: "Configurar wiki" },
   { href: "/admin/import", label: "Importar fichas" },
   { href: "/admin/review", label: "Cola editorial" },
   { href: "/admin/articles", label: "Publicaciones" },

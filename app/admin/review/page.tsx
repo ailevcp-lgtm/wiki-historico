@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { EditorAccessNotice } from "@/components/editor-access-notice";
 import { EditorAuthRequired } from "@/components/editor-auth-required";
+import { StagedDocumentsQueue } from "@/components/staged-documents-queue";
 import { requireEditorPageAccess } from "@/lib/editor/auth";
 import { listSourceDocuments } from "@/lib/staging/store";
 
@@ -12,6 +13,16 @@ export default async function AdminReviewPage() {
     return <EditorAuthRequired access={access} />;
   }
   const documents = await listSourceDocuments();
+  const queueDocuments = documents.map((document) => ({
+    id: document.id,
+    sourceName: document.sourceName,
+    detectedKind: document.detectedKind,
+    importStatus: document.importStatus,
+    stagingMode: document.stagingMode,
+    targetSlug: document.targetSlug,
+    parseNotes: document.parseNotes,
+    createdAt: document.createdAt
+  }));
 
   return (
     <section className="space-y-6">
@@ -33,50 +44,7 @@ export default async function AdminReviewPage() {
             Cargar más fichas
           </Link>
         </div>
-
-        <div className="mt-5 space-y-4">
-          {documents.length === 0 ? (
-            <p className="text-wiki-muted">Todavía no hay documentos guardados en la cola editorial.</p>
-          ) : (
-            documents.map((document) => (
-              <article key={document.id} className="rounded-sm border border-wiki-border bg-white p-4">
-                <div className="flex flex-wrap gap-2">
-                  <span className="wiki-badge">{document.detectedKind}</span>
-                  <span className="wiki-badge">{document.importStatus}</span>
-                  <span className="wiki-badge">{document.stagingMode}</span>
-                </div>
-                <h2 className="mt-3 font-heading text-2xl">
-                  <Link href={`/admin/review/${document.id}`} className="hover:text-wiki-blue">
-                    {document.sourceName}
-                  </Link>
-                </h2>
-                <p className="mt-2 text-sm text-wiki-muted">
-                  Target slug: {document.targetSlug ?? "sin slug"} · {new Date(document.createdAt).toLocaleString("es-AR")}
-                </p>
-                {document.importStatus === "imported" && document.targetSlug ? (
-                  <p className="mt-2 text-sm text-wiki-muted">
-                    Destino{" "}
-                    <Link
-                      href={
-                        document.detectedKind === "country"
-                          ? `/admin/countries/${document.targetSlug}`
-                          : `/admin/articles?slug=${document.targetSlug}`
-                      }
-                      className="wiki-link"
-                    >
-                      {document.detectedKind === "country"
-                        ? `/admin/countries/${document.targetSlug}`
-                        : `/admin/articles?slug=${document.targetSlug}`}
-                    </Link>
-                  </p>
-                ) : null}
-                {document.parseNotes ? (
-                  <p className="mt-3 text-sm text-wiki-muted whitespace-pre-wrap">{document.parseNotes}</p>
-                ) : null}
-              </article>
-            ))
-          )}
-        </div>
+        <StagedDocumentsQueue documents={queueDocuments} />
       </section>
     </section>
   );

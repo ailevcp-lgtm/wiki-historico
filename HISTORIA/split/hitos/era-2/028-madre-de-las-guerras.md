@@ -1,0 +1,134 @@
+ERA 2
+“MADRE DE LAS GUERRAS”
+Hito 28
+Nombre del Hito
+MADRE DE LAS GUERRAS
+ID del Hito
+[H-028]
+Período
+[29/3/2046-2055]
+Tipo
+[Guerra mundial]
+Ubicación / Alcance
+[GLOBAL]
+Actores principales
+[GLOBAL]
+Era / Contexto
+[Era 2]
+1. ANTECEDENTES
+La “Madre de las Guerras” no surgió como una guerra mundial clásica, declarada de manera formal entre dos alianzas rígidas desde el primer día, sino como el resultado de una acumulación prolongada de fracturas geopolíticas, colapsos institucionales, reconfiguraciones territoriales y rupturas doctrinarias que, a lo largo de casi tres décadas, fueron desintegrando el orden internacional hasta volver inevitable un conflicto sistémico de escala planetaria. Su origen profundo debe buscarse en la erosión progresiva de las estructuras de contención global que habían definido la segunda mitad del siglo XX y el comienzo del XXI: la disuasión nuclear como límite implícito, la globalización económica como amortiguador estratégico, la cooperación multilateral como marco de resolución de crisis y la idea de que las grandes potencias, aun enfrentadas, conservarían siempre algún interés común en evitar el colapso del sistema. Ese conjunto de supuestos comenzó a resquebrajarse con fuerza en la segunda mitad de la década de 2020, cuando una serie de conflictos regionales dejó de ser percibida como episodios aislados para convertirse en síntomas de una descomposición estructural mucho más profunda. El primer gran quiebre se produjo con la escalada entre Irán, Israel y Occidente, que transformó una guerra de las sombras en una confrontación abierta con consecuencias energéticas, militares y diplomáticas de alcance global. La disrupción del comercio en torno al Estrecho de Ormuz, el encarecimiento extremo del petróleo, la militarización sostenida del Golfo y la posterior intervención directa de múltiples actores internacionales no solo alteraron el equilibrio de Medio Oriente, sino que revelaron con crudeza hasta qué punto la estabilidad global dependía de nodos estratégicos cada vez más frágiles. Poco después, la guerra entre Irán y la Liga Árabe, la muerte de Mojtaba Jamenei y el colapso parcial del aparato estatal iraní aceleraron una mutación decisiva: la sustitución de la vieja teocracia clerical por una teocracia militar-revolucionaria dirigida por la Guardia Revolucionaria, más radicalizada, más centralizada en la lógica de supervivencia y menos dispuesta a aceptar los límites tradicionales del conflicto. Ese proceso, que en un primer momento pudo parecer estrictamente regional, acabó teniendo efectos sistémicos al consolidar un Medio Oriente más militarizado, más sectario y más dispuesto a emplear la devastación como herramienta legítima de equilibrio. Todo ello ya estaba inscripto en la arquitectura inicial de tu cronología base.
+En paralelo, Asia del Sur inició su propia transformación. Pakistán, aprovechando el caos regional derivado del colapso iraní y la expansión de redes armadas, abandonó su vieja lógica defensiva y adoptó una doctrina de “soberanía total”, basada en la eliminación de actores no estatales, la centralización extrema del poder y una reinterpretación nacionalista de su destino histórico. Lo que comenzó como una campaña interna de estabilización derivó en una expansión territorial abierta: la anexión de Afganistán, la ofensiva sobre Cachemira y la casi guerra nuclear con India alteraron profundamente la percepción internacional sobre los límites efectivos del uso de la fuerza. A partir de entonces, la revisión de fronteras dejó de ser una hipótesis teórica para convertirse en una práctica concreta. La idea de que un Estado podía redibujar el mapa regional mediante la guerra y conservar parte de sus ganancias, aun pagando costos económicos o diplomáticos, tuvo un efecto corrosivo sobre la arquitectura de seguridad global. Del mismo modo, el desenlace del conflicto entre Rusia y Ucrania, con una Europa agotada por la crisis energética, la inflación y el desgaste político, terminó de debilitar la credibilidad del orden occidental. La incapacidad de sostener el esfuerzo bélico hasta una resolución favorable fue leída en Moscú, en Asia y en otras regiones como una señal inequívoca de retroceso estratégico. La guerra ya no aparecía como una anomalía que el sistema podía contener, sino como el método mediante el cual los actores con suficiente capacidad de presión podían imponer nuevos hechos consumados.
+Ese proceso de degradación alcanzó su umbral crítico cuando el tabú nuclear colapsó de manera irreversible. El bombardeo termonuclear sobre Jerusalén el 29 de marzo de 2046, ordenado por el régimen iraní radicalizado bajo el liderazgo del Ayatolá Ali Reza Khorasani, destruyó no solo una ciudad de inmenso valor histórico, religioso y simbólico, sino también la última ilusión de que las armas nucleares seguirían confinadas al plano de la amenaza. El ataque convirtió la disuasión en uso efectivo y forzó a Israel a abandonar su ambigüedad estratégica, revelando al mundo su arsenal nuclear y empleándolo en un enfrentamiento directo con Irán. A partir de allí, el sistema internacional entró en una nueva etapa: la guerra nuclear dejó de pertenecer al terreno de las doctrinas y pasó a integrarse al cálculo operativo de los Estados. Ese cambio tuvo consecuencias inmediatas en otros frentes. India y Pakistán, ya cargados de tensiones históricas, ingresaron en un conflicto nuclear sostenido en Asia del Sur, donde la destrucción masiva y el riesgo de aniquilación mutua obligaron a un acuerdo de no utilización nuclear sin poner fin a la guerra convencional. Poco después, la Crisis del Luminum Sky llevó a Estados Unidos, Reino Unido, China y Rusia a un intercambio nuclear de gran escala que, aunque no alcanzó el exterminio civilizacional total, sí demostró que incluso las mayores potencias del planeta estaban dispuestas a cruzar el umbral atómico si interpretaban que su posición estratégica estaba en juego. El acuerdo de no destrucción mutua entre estas cuatro potencias no restableció el orden; apenas congeló el centro del sistema, desplazando la violencia máxima hacia sus periferias.
+Allí radica uno de los rasgos más importantes de la “Madre de las Guerras”: no fue una guerra nacida de una decisión única, sino de un corrimiento sucesivo de los límites de lo posible. Cada hito preparó al siguiente no solo por sus consecuencias materiales, sino por la alteración psicológica y doctrinaria que imponía. Cuando un Estado podía ser parcialmente reubicado, como en el caso del nacimiento de Nueva Judea en Bahía Blanca; cuando un país podía anexionar a otro y sobrevivir a las sanciones; cuando una capital histórica podía desaparecer bajo una bomba de cien megatones, como ocurrió en las afueras de París; cuando una unión supranacional tan densa como la Unión Europea podía disolverse entre inflación, deuda y pérdida de soberanía efectiva; cuando el Reino Unido podía expandirse sobre el norte de Francia, el norte de España y todo Portugal y luego consolidar un “Gran Reino Unido” mediante la integración de antiguos miembros de la Commonwealth; cuando los pueblos germánicos podían reorganizarse en una Confederación propia para sobrevivir en un continente fragmentado; cuando incluso el desierto del Sahara podía convertirse en objetivo de un fuego de disuasión nuclear con consecuencias ecológicas globales sobre el Amazonas y Europa, entonces la guerra dejaba de ser una secuencia de campañas y pasaba a convertirse en la forma misma de la reorganización mundial. En ese marco, la paz ya no actuaba como estado normal entre conflictos, sino como excepción breve, local o instrumental dentro de una lógica más amplia de confrontación permanente.
+La consolidación de bloques fue la expresión política de esta transformación. A medida que el orden multilateral se hundía, los Estados comenzaron a reagruparse no en torno a principios abstractos, sino a necesidades concretas de supervivencia, abastecimiento, defensa y proyección estratégica. El Bloque Estados Unidos —conformado en torno a Washington, Reino Unido, Israel, Pakistán y la Liga Árabe— articuló capacidades tecnológicas, militares y marítimas de enorme alcance, pero también arrastró profundas contradicciones entre sus miembros, cuyos intereses regionales no siempre coincidían. El bloque BRICS, ampliado y militarizado bajo la influencia de Brasil, Rusia, India, China, Sudáfrica e Irán, emergió como contrapeso revisionista, combinando masa territorial, recursos, población y voluntad explícita de reescribir el equilibrio global. La Unión Europea, debilitada, intentó preservar una voz propia hasta que su descomposición interna la volvió incapaz de sostenerse como actor colectivo. Entre ambos polos, un bloque neutral inestable reunió a Estados que procuraban no ser absorbidos por la lógica total del conflicto, aunque en la práctica casi ninguno consiguió permanecer realmente al margen. De esta forma, el sistema internacional dejó de organizarse como una red densa de instituciones y reglas relativamente universales, para mutar hacia una constelación de macrobloques, entidades regionales, confederaciones emergentes y Estados reubicados, todos atravesados por la lógica de la guerra prolongada.
+La propia dinámica temporal del conflicto reforzó esta estructura. La fase de Movimiento fue el momento de la expansión inicial, cuando las rivalidades históricas reprimidas, las disputas territoriales latentes y las ventanas de oportunidad abiertas por el colapso del orden internacional desencadenaron ofensivas rápidas, anexiones, reposicionamientos y campañas relámpago. Allí se definieron muchos de los nuevos trazados de poder: Pakistán reescribiendo Asia del Sur, Irán e Israel desencadenando la ruptura nuclear, las grandes potencias comenzando a movilizarse, los frentes periféricos multiplicándose a gran velocidad. Luego llegó la fase de Trinchera, menos móvil pero no menos peligrosa, en la que los frentes se estabilizaron relativamente y los Estados buscaron convertir sus conquistas o supervivencias iniciales en nuevas arquitecturas duraderas. Fue en ese contexto donde surgieron herramientas como AETHER, las integraciones estratégicas como el Gran Reino Unido, los intentos europeos de preservar algo de cohesión y la posterior conformación de la Confederación Germana. Sin embargo, esta aparente estabilización no representó una moderación real, sino una pausa cargada de presión acumulada: economías agotadas, sociedades militarizadas, instituciones cada vez más vacías y poblaciones sometidas a inflación, escasez, desplazamientos y trauma. La fase de Desgaste, finalmente, fue el momento en que esa presión se tradujo en el uso más brutal de la violencia sobre sociedades exhaustas, infraestructuras colapsadas y ecosistemas vulnerables. Allí la guerra se volvió menos espectacular en sus movimientos y más devastadora en sus efectos sistémicos: hambrunas, contaminación, defaults, disoluciones estatales, radicalizaciones políticas y decisiones extremas adoptadas por actores que ya no combatían por victoria, sino por evitar la desaparición.
+Otro de los antecedentes centrales de la “Madre de las Guerras” fue la transformación del vínculo entre guerra y tecnología. Antes incluso del estallido total, la inteligencia artificial, la automatización logística, la guerra cibernética y la gestión algorítmica de recursos habían comenzado a desplazar a la masa industrial clásica como fuente exclusiva de ventaja estratégica. Durante la guerra, este proceso se aceleró. AETHER, por ejemplo, surgió en la fase de Trinchera como respuesta a la necesidad de sostener Estados pequeños o medianos, particularmente aquellos situados cerca de zonas contaminadas, con pocos recursos propios y alto estrés logístico. Lo que parecía en un principio una herramienta de supervivencia periférica se transformó en un antecedente crucial del mundo posterior: la guerra ya no se libraba solo con ejércitos, bombas o divisiones blindadas, sino con sistemas de optimización capaces de redistribuir recursos, sostener poblaciones, anticipar crisis y convertir la escasez en ventaja relativa. En la “Madre de las Guerras”, la tecnología no reemplazó a la violencia, pero la hizo más persistente, más administrable y más desigual. Los actores que podían integrar datos, logística, automatización y proyección militar adquirían una resiliencia que antes dependía exclusivamente de la escala territorial o demográfica.
+Finalmente, el antecedente más profundo de la “Madre de las Guerras” fue antropológico y civilizacional. Tras décadas de crisis sucesivas, las sociedades dejaron de esperar que el sistema internacional resolviera sus contradicciones por medios institucionales. El cansancio con la diplomacia ineficaz, la naturalización de la guerra híbrida, la percepción de que las grandes potencias actuaban sólo según conveniencia y la reiteración de desastres cada vez más extremos generaron una mutación en la imaginación política de gobiernos y poblaciones. La excepción violenta se volvió normalidad. La cesión de soberanía dejó de ser impensable si garantizaba supervivencia. La unificación forzada dejó de ser un tabú si aseguraba recursos y defensa. La guerra nuclear dejó de ser el final absoluto y pasó a concebirse, horriblemente, como una herramienta más dentro de un repertorio extremo. La “Madre de las Guerras” nació justamente cuando todos esos cambios dispersos dejaron de operar de manera separada y comenzaron a superponerse. No fue solo una guerra entre bloques, ni sólo una secuencia de guerras regionales conectadas: fue el momento en que el sistema mundial entero entró en combustión histórica y aceptó, de forma explícita o implícita, que su reorganización ya no ocurriría mediante negociación, sino a través de una violencia prolongada, industrial, nuclear, ecológica y civilizacionalmente transformadora.
+2. DESARROLLO
+La “Madre de las Guerras” se desarrolló como el primer conflicto verdaderamente sistémico de la historia moderna, no solo por su escala global, sino por la forma en que integró múltiples guerras regionales, crisis económicas, colapsos estatales y el uso reiterado de armamento nuclear dentro de una misma dinámica prolongada. A diferencia de conflictos anteriores, no existió un inicio único ni un frente definido: la guerra emergió como una superposición de crisis que, con el tiempo, se fusionaron en un único proceso global de confrontación.
+1) ETAPA DE MOVIMIENTO (2046 – 2048)
+La fase de Movimiento marcó el estallido visible del conflicto. Fue un período de alta velocidad estratégica, donde los Estados aprovecharon el colapso del orden internacional para avanzar sobre disputas históricas y redefinir territorios.
+El bombardeo termonuclear sobre Jerusalén en marzo de 2046 rompió definitivamente el tabú nuclear, desencadenando una reacción en cadena. Israel respondió revelando su arsenal nuclear y enfrentándose directamente con Irán, dando inicio a un conflicto que rápidamente escaló a nivel regional. Paralelamente, India y Pakistán entraron en un enfrentamiento nuclear directo, mientras que múltiples actores comenzaron a movilizar fuerzas ante la percepción de que el sistema internacional había perdido su capacidad de contención.
+Durante esta etapa, las potencias y actores regionales buscaron ganancias rápidas. Pakistán consolidó su expansión territorial en Asia del Sur, Irán intentó proyectar su poder en Medio Oriente, y diversos conflictos secundarios se activaron en África, Europa del Este y el Mediterráneo. Las grandes potencias comenzaron a posicionarse, evitando inicialmente el enfrentamiento directo pero aumentando su presencia militar en zonas estratégicas.
+El mundo entró en un estado de guerra fragmentada pero interconectada, donde múltiples frentes avanzaban en paralelo sin una coordinación global, pero con efectos acumulativos que amplificaban la inestabilidad.
+2) ETAPA DE TRINCHERA (2048 – 2051)
+Tras el impulso inicial, el conflicto entró en una fase de estabilización relativa. Las líneas de frente comenzaron a consolidarse y los Estados pasaron de la ofensiva rápida a la guerra de posición, priorizando la defensa de territorios conquistados y la reorganización interna.
+Durante este período, se produjo uno de los eventos más críticos de toda la guerra: la Crisis del Luminum Sky, donde Estados Unidos, Reino Unido, China y Rusia entraron en un intercambio nuclear de gran escala. El uso de cientos de armas nucleares provocó decenas de millones de muertos y una destrucción masiva de infraestructura global. Sin embargo, el riesgo de aniquilación total llevó a estas potencias a firmar un acuerdo de no destrucción mutua, congelando el enfrentamiento directo entre ellas.
+Este acuerdo no trajo paz, sino una redistribución del conflicto. Las grandes potencias redujeron su confrontación directa, pero los frentes periféricos se intensificaron. Europa, debilitada, se convirtió en uno de los principales escenarios de desgaste. El ataque termonuclear de 100 megatones en las afueras de París marcó el colapso definitivo de la Unión Europea como actor político.
+En paralelo, surgieron nuevas dinámicas estructurales. Tecnologías como AETHER comenzaron a ser utilizadas por Estados vulnerables para sostener su funcionamiento en entornos de crisis. Se consolidaron alianzas más rígidas, y el mundo empezó a reorganizarse en bloques:
+- Bloque liderado por Estados Unidos
+- Bloque BRICS
+- Unión Europea (en proceso de colapso)
+- Bloque neutral fragmentado
+La guerra dejó de ser móvil, pero se volvió más profunda, más estructural y más difícil de revertir.
+3) ETAPA DE DESGASTE (2051 – 2055)
+La fase final fue la más prolongada y devastadora. Con los frentes estabilizados y las economías agotadas, la guerra entró en una lógica de supervivencia extrema. Ya no se luchaba por expansión, sino por evitar el colapso total.
+Europa terminó de fragmentarse, dando lugar a nuevas configuraciones como el dominio británico en Europa occidental y la formación de la Confederación Germana en el centro del continente. Al mismo tiempo, surgieron nuevos modelos de organización estatal, como el “Gran Reino Unido”, que integró territorios de la Commonwealth en una estructura unificada para sostenerse en el nuevo orden.
+El uso de armas nucleares continuó, aunque de forma más localizada pero igualmente devastadora. El conflicto entre Egipto y los remanentes europeos culminó en una ofensiva nuclear masiva sobre el norte de África y el Sahara, provocando decenas de millones de muertos y una crisis ambiental global al contaminar los sistemas de nutrientes que alimentaban al Amazonas y partes de Europa.
+A nivel global, las economías colapsaron, los sistemas financieros dejaron de funcionar de manera integrada y millones de personas fueron desplazadas. La guerra dejó de ser únicamente militar y pasó a ser económica, ambiental y social.
+3. CONSECUENCIAS INMEDIATAS
+1. Fin de la “Madre de las Guerras” en 2055, tras casi una década de conflicto global continuo.
+2. Entre 300 y 500 millones de muertos a nivel mundial, producto de combates, bombardeos nucleares, hambrunas y colapsos sanitarios.
+3. Uso de más de 400 – 700 armas nucleares durante el conflicto, distribuidas en múltiples frentes.
+4. Normalización del uso limitado de armas nucleares, rompiendo definitivamente el tabú histórico.
+5. Colapso del orden internacional previo, con desaparición de instituciones multilaterales efectivas.
+6. Disolución definitiva de la Unión Europea, y fragmentación total del continente.
+7. Aparición de nuevos bloques globales, incluyendo el bloque estadounidense, el bloque BRICS y actores neutrales fragmentados.
+8. Consolidación del Gran Reino Unido como potencia dominante en Europa occidental.
+9. Formación de la Confederación Germana como núcleo de estabilidad en Europa central.
+10. Reubicación estatal como nueva herramienta geopolítica, ejemplificada por la creación de Nueva Judea.
+11. Redefinición de la soberanía territorial, con cesiones, anexiones y reconfiguraciones sin precedentes.
+12. Desplazamiento de más de 200 – 300 millones de personas, generando la mayor crisis migratoria de la historia.
+13. Colapso de múltiples Estados en África, Medio Oriente y partes de Asia, con pérdida total de gobernabilidad.
+14. Crisis económica global estructural, con caída del comercio internacional y fragmentación de mercados.
+15. Aumento extremo de la inflación y endeudamiento estatal, debilitando economías incluso en regiones estables.
+16. Devastación de infraestructuras críticas a escala global, incluyendo ciudades, puertos, redes energéticas y sistemas logísticos.
+17. Inicio de una crisis ecológica global, impulsada por contaminación nuclear y alteración de ecosistemas clave.
+18. Deterioro del Amazonas y degradación de suelos en múltiples regiones, afectando la producción alimentaria mundial.
+19. Militarización permanente de los Estados, con sociedades adaptadas a contextos de guerra prolongada.
+20. Pérdida masiva de confianza en la diplomacia internacional, reemplazada por lógica de bloques y disuasión directa.
+21. Emergencia de nuevas tecnologías de supervivencia estatal, como sistemas de gestión de recursos tipo AETHER.
+22. Reducción de la globalización, dando paso a economías regionalizadas y autosuficientes.
+23. Cambio en la percepción de la guerra, pasando de ser un último recurso a una herramienta estructural del sistema.
+24. Inicio de la era post-guerra, caracterizada por un mundo fragmentado, inestable y marcado por las consecuencias del conflicto.
+4. CONSECUENCIAS A LARGO PLAZO
+1. Transformación definitiva del sistema internacional, pasando de un orden basado en Estados a uno dominado por bloques, actores tecnológicos y estructuras supranacionales.
+2. Reducción masiva de la población mundial, alterando de forma permanente la demografía global y la distribución del poder.
+3. Colapso estructural de múltiples Estados, con la desaparición o transformación radical de sistemas políticos tradicionales.
+4. Consolidación de nuevos bloques globales (EE.UU., BRICS, Unión Europea residual, Neutrales), redefiniendo la geopolítica mundial.
+5. Aparición de nuevas ideologías dominantes, especialmente vinculadas a la tecnología (AETHER), la religión (Ummah) y modelos mixtos.
+6. Destrucción de grandes centros urbanos y económicos, obligando a la reconstrucción desde cero de múltiples regiones.
+7. Contaminación ambiental global, con zonas inhabitables (“páramos”) que alteran la geografía humana.
+8. Reconfiguración total del comercio internacional, con sistemas fragmentados y controlados por bloques.
+9. Pérdida definitiva de la confianza en el sistema internacional previo, dando lugar a la creación de la Sociedad de Estados.
+10. Inicio de una nueva era histórica centrada en la supervivencia, reconstrucción y redefinición del rol humano en el planeta.
+5. PAÍSES / REGIONES AFECTADOS
+[Región 1: Medio Oriente] (Negativamente) Se convierte en uno de los epicentros iniciales del conflicto, con devastación nuclear, colapso estatal y transformación total del equilibrio regional.
+[Región 2: Asia del Sur] (Negativamente) Sufre un conflicto nuclear prolongado entre India y Pakistán, con destrucción masiva y crisis humanitaria extrema.
+[Región 3: Europa Occidental] (Negativamente) Experimenta colapso estructural, destrucción nuclear y pérdida de cohesión política tras la disolución de la Unión Europea.
+[Región 4: Europa Central] (Mixto) Logra cierta estabilización con la formación de la Confederación Germana, aunque en un contexto de devastación generalizada.
+[Región 5: Europa del Este] (Negativamente) Permanece como zona de tensión constante, con conflictos prolongados y presión de múltiples bloques.
+[Región 6: Norte de África] (Negativamente) Sufre devastación extrema tras ataques nucleares masivos, con colapso estatal y contaminación ambiental.
+[Región 7: África Subsahariana] (Negativamente) Impactada por crisis humanitarias, desplazamientos masivos y efectos indirectos del conflicto.
+[Región 8: América del Norte] (Mixto) Mantiene capacidad estructural, pero sufre impactos económicos, militares y estratégicos del conflicto global.
+[Región 9: América del Sur] (Mixto) Gana relevancia geopolítica y recibe nuevos actores estatales, pero enfrenta tensiones internas y reconfiguración regional.
+[Región 10: Asia Oriental] (Mixto) Participa en conflictos de alta intensidad, con uso nuclear y reorganización estratégica.
+[Región 11: Asia Central] (Negativamente) Queda atravesada por conflictos derivados y reconfiguraciones territoriales.
+[Región 12: Oceanía] (Mixto) Se integra a nuevas estructuras políticas como el Gran Reino Unido, ganando estabilidad relativa.
+[Región 13: Atlántico Sur] (Mixto)
+Aumenta su relevancia estratégica por la presencia de nuevos actores y rutas clave.
+[Región 14: Océano Índico] (Negativamente) Se militariza fuertemente, afectando rutas comerciales y seguridad marítima.
+[Región 15: Ártico] (Mixto) Gana importancia estratégica como zona de recursos y nuevas rutas, en un mundo reconfigurado.
+[Región 16: Amazonas] (Negativamente) Sufre deterioro progresivo por alteraciones en el ciclo de nutrientes y contaminación global.
+[Región 17: Sistema climático global] (Negativamente) Se ve alterado por el uso masivo de armas nucleares y cambios ecológicos a gran escala.
+[Región 18: Sistema internacional] (Mixto) Se transforma completamente, dando paso a un orden fragmentado basado en bloques y supervivencia.
+6. DATOS CLAVE PARA LA WIKI
+[Dato 1: 2046 – 2055 (duración del conflicto global)]
+[Dato 2: 300 – 500 millones de muertos]
+[Dato 3: 600 – 1.000 millones de heridos]
+[Dato 4: 200 – 300 millones de desplazados]
+[Dato 5: 400 – 700 armas nucleares utilizadas]
+[Dato 6: 50 – 80 ciudades principales destruidas globalmente]
+[Dato 7: 5.000.000 – 8.000.000 km² afectados por radiación o devastación]
+[Dato 8: 60% de caída del comercio global en el pico del conflicto]
+[Dato 9: 70% de aumento en gasto militar global]
+[Dato 10: 4 grandes bloques globales consolidados]
+[Dato 11: 35% de caída en producción alimentaria global]
+[Dato 12: 1° guerra verdaderamente global con uso nuclear múltiple]
+7. CONEXIONES CON OTROS HITOS
+¿Qué hitos anteriores causan este? ¿Qué hitos posteriores genera?
+Hitos previos: [H-016, H-017, H-018, H-020, H-022, H-027]
+Hitos posteriores: [H-029, H-031, H-038, H-040]
+Metadatos para la Wiki
+Título del artículo wiki
+[Nombre del Hito (H2100)]
+Categorías wiki
+[Eventos y Crisis / Tratados / Tecnología / etc.]
+Infobox a usar
+[Infobox Evento / Infobox Tratado / Infobox Conflicto / etc.]
+Imagen sugerida
+[Descripción de la imagen que debería acompañar]
+Autor / Responsable
+[Nombre del miembro de AILE]
+Estado
+[Borrador / En revisión / Aprobado / Publicado]

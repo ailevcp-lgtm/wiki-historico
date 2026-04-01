@@ -1,4 +1,4 @@
-import type { ArticleType, InfoboxData } from "@/types/wiki";
+import type { ArticleType, CountryOrganSlug, CountryScore, InfoboxData } from "@/types/wiki";
 
 export type ImportIssueLevel = "error" | "warning" | "info";
 export type ImportDocumentKind = "hito" | "country" | "unknown";
@@ -20,6 +20,7 @@ export interface HitoDraftCandidate {
   yearEnd?: number;
   categorySlugs: string[];
   infobox?: InfoboxData;
+  imageUrl?: string;
   markdown: string;
   sourceFields: {
     sourceType?: string;
@@ -45,7 +46,11 @@ export interface CountryDraftCandidate {
   eraSlug?: string;
   summary: string;
   profileMarkdown: string;
+  flagUrl?: string;
+  mapUrl?: string;
+  organMemberships?: CountryOrganSlug[];
   scores: CountryScoreDraft[];
+  historicalScores?: CountryScore[];
 }
 
 interface BaseImportPreview {

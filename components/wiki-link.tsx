@@ -4,13 +4,14 @@ interface WikiLinkProps {
   slug: string;
   label: string;
   exists?: boolean;
+  href?: string;
 }
 
-export function WikiLink({ slug, label, exists = true }: WikiLinkProps) {
+export function WikiLink({ slug, label, exists = true, href }: WikiLinkProps) {
   return (
     <Link
-      href={`/article/${slug}`}
-      className={exists ? "wiki-link" : "wiki-link wiki-link-missing"}
+      href={href ?? `/article/${slug}`}
+      className={exists ? "wiki-link wiki-link-track" : "wiki-link wiki-link-track wiki-link-missing"}
     >
       {label}
     </Link>

@@ -4,33 +4,39 @@ import {
   getFeaturedArticle,
   getLatestArticles,
   getNavigationData,
+  getPublicWikiCopy,
   getWikiStats
 } from "@/lib/repository";
 import { formatYearRange, humanizeSlug } from "@/lib/utils";
 
 export default async function HomePage() {
-  const featuredArticle = await getFeaturedArticle();
-  const latestArticles = await getLatestArticles();
-  const stats = await getWikiStats();
-  const { blocs, eras } = getNavigationData();
+  const [featuredArticle, latestArticles, stats, navigation, copy] = await Promise.all([
+    getFeaturedArticle(),
+    getLatestArticles(),
+    getWikiStats(),
+    getNavigationData(),
+    getPublicWikiCopy()
+  ]);
+  const { blocs, eras } = navigation;
 
   return (
     <div className="space-y-6">
       <section className="wiki-paper overflow-hidden">
         <div className="border-b border-wiki-border bg-gradient-to-r from-[#f7f5ef] via-white to-[#e8eff7] px-5 py-8 md:px-8">
-          <p className="mb-2 text-sm uppercase tracking-[0.24em] text-wiki-muted">Modelo histórico futurista</p>
-          <h1 className="wiki-page-title max-w-3xl">Histórico 2026-2100</h1>
+          <p className="mb-2 text-sm uppercase tracking-[0.24em] text-wiki-muted">
+            {copy.home.heroEyebrow}
+          </p>
+          <h1 className="wiki-page-title max-w-3xl">{copy.home.heroTitle}</h1>
           <p className="mt-3 max-w-3xl text-lg leading-8 text-wiki-muted">
-            Una wiki ficticia para seguir la evolución del mundo desde la crisis inicial hasta la
-            cumbre que discute quién tiene derecho al futuro.
+            {copy.home.heroDescription}
           </p>
         </div>
 
         <div className="space-y-3 px-5 py-5 md:px-8">
           <div className="flex items-center justify-between">
-            <h2 className="font-heading text-2xl">Cronología base</h2>
-            <Link href="/timeline" className="wiki-link text-sm">
-              Ver timeline completo
+            <h2 className="font-heading text-2xl">{copy.home.timelineSectionTitle}</h2>
+            <Link href="/timeline" className="wiki-link wiki-link-track text-sm">
+              {copy.home.timelineSectionLinkLabel}
             </Link>
           </div>
 
@@ -43,7 +49,7 @@ export default async function HomePage() {
                 style={{ backgroundColor: era.color }}
               >
                 <div className="font-semibold text-white">
-                  Era {era.number}: {era.name}
+                  {copy.shell.eraLabelPrefix} {era.number}: {era.name}
                 </div>
                 <div className="mt-1 text-xs uppercase tracking-[0.12em] text-white/85">
                   {formatYearRange(era.yearStart, era.yearEnd)}
@@ -56,50 +62,75 @@ export default async function HomePage() {
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.95fr]">
         <article className="wiki-paper p-5 md:p-6">
-          <div className="mb-3 flex items-center gap-3">
-            <span className="wiki-badge">Artículo destacado</span>
-            <span className="text-sm text-wiki-muted">{featuredArticle.type}</span>
-          </div>
-          <h2 className="font-heading text-3xl leading-tight">
-            <Link href={`/article/${featuredArticle.slug}`} className="hover:text-wiki-blue">
-              {featuredArticle.title}
-            </Link>
-          </h2>
-          <p className="mt-3 text-base leading-7 text-wiki-muted">{featuredArticle.summary}</p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {featuredArticle.categorySlugs.map((slug) => (
-              <Link key={slug} href={`/category/${slug}`} className="wiki-badge">
-                {humanizeSlug(slug)}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-6">
-            <Link href={`/article/${featuredArticle.slug}`} className="wiki-link font-semibold">
-              Abrir artículo completo
-            </Link>
-          </div>
+          {featuredArticle ? (
+            <>
+              <div className="mb-3 flex items-center gap-3">
+                <span className="wiki-badge">{copy.home.featuredBadgeLabel}</span>
+                <span className="text-sm text-wiki-muted">{featuredArticle.type}</span>
+              </div>
+              <h2 className="font-heading text-3xl leading-tight">
+                <Link href={`/article/${featuredArticle.slug}`} className="wiki-link-track">
+                  {featuredArticle.title}
+                </Link>
+              </h2>
+              <p className="mt-3 text-base leading-7 text-wiki-muted">{featuredArticle.summary}</p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {featuredArticle.categorySlugs.map((slug) => (
+                  <Link key={slug} href={`/category/${slug}`} className="wiki-badge">
+                    {humanizeSlug(slug)}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-6">
+                <Link
+                  href={`/article/${featuredArticle.slug}`}
+                  className="wiki-link wiki-link-track font-semibold"
+                >
+                  {copy.home.featuredReadMoreLabel}
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-3 flex items-center gap-3">
+                <span className="wiki-badge">{copy.home.featuredBadgeLabel}</span>
+                <span className="text-sm text-wiki-muted">{copy.home.featuredPendingTypeLabel}</span>
+              </div>
+              <h2 className="font-heading text-3xl leading-tight">{copy.home.featuredEmptyTitle}</h2>
+              <p className="mt-3 text-base leading-7 text-wiki-muted">
+                {copy.home.featuredEmptyDescription}
+              </p>
+            </>
+          )}
         </article>
 
         <aside className="space-y-6">
           <section className="wiki-paper p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-heading text-2xl">Últimos publicados</h2>
-              <Link href="/search" className="wiki-link text-sm">
-                Explorar todo
+              <h2 className="font-heading text-2xl">{copy.home.latestSectionTitle}</h2>
+              <Link href="/search" className="wiki-link wiki-link-track text-sm">
+                {copy.home.latestSectionLinkLabel}
               </Link>
             </div>
 
             <div className="mt-4 space-y-4">
-              {latestArticles.map((article) => (
-                <article key={article.slug} className="border-b border-wiki-border pb-4 last:border-b-0 last:pb-0">
-                  <Link href={`/article/${article.slug}`} className="font-semibold text-wiki-blue hover:underline">
-                    {article.title}
-                  </Link>
-                  <p className="mt-1 text-sm text-wiki-muted">
-                    {article.yearStart} · {article.summary}
-                  </p>
-                </article>
-              ))}
+              {latestArticles.length > 0 ? (
+                latestArticles.map((article) => (
+                  <article key={article.slug} className="border-b border-wiki-border pb-4 last:border-b-0 last:pb-0">
+                    <Link
+                      href={`/article/${article.slug}`}
+                      className="wiki-link wiki-link-track font-semibold"
+                    >
+                      {article.title}
+                    </Link>
+                    <p className="mt-1 text-sm text-wiki-muted">
+                      {article.yearStart} · {article.summary}
+                    </p>
+                  </article>
+                ))
+              ) : (
+                <p className="text-sm text-wiki-muted">{copy.home.latestEmptyMessage}</p>
+              )}
             </div>
           </section>
         </aside>
@@ -107,8 +138,8 @@ export default async function HomePage() {
 
       <section className="wiki-paper p-5 md:p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-heading text-2xl">Acceso por bloques</h2>
-          <span className="text-sm text-wiki-muted">Mapa político resumido</span>
+          <h2 className="font-heading text-2xl">{copy.home.blocsSectionTitle}</h2>
+          <span className="text-sm text-wiki-muted">{copy.home.blocsSectionKicker}</span>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -126,16 +157,30 @@ export default async function HomePage() {
       </section>
 
       <section className="wiki-paper p-5 md:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-2xl">{copy.home.directorySectionTitle}</h2>
+            <p className="mt-2 max-w-3xl text-wiki-muted">
+              {copy.home.directorySectionDescription}
+            </p>
+          </div>
+          <Link href="/countries" className="rounded-sm border border-wiki-border bg-white px-4 py-2 text-sm font-semibold">
+            {copy.home.directorySectionButtonLabel}
+          </Link>
+        </div>
+      </section>
+
+      <section className="wiki-paper p-5 md:p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-heading text-2xl">Estadísticas del archivo</h2>
-          <span className="text-sm text-wiki-muted">Estado actual de la wiki</span>
+          <h2 className="font-heading text-2xl">{copy.home.statsSectionTitle}</h2>
+          <span className="text-sm text-wiki-muted">{copy.home.statsSectionKicker}</span>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          <StatCard label="Artículos publicados" value={String(stats.publishedArticles)} />
-          <StatCard label="Países y regiones" value={String(stats.countries)} />
-          <StatCard label="Categorías" value={String(stats.categories)} />
-          <StatCard label="Eras activas" value={String(stats.eras)} />
+          <StatCard label={copy.home.statsPublishedArticlesLabel} value={String(stats.publishedArticles)} />
+          <StatCard label={copy.home.statsCountriesLabel} value={String(stats.countries)} />
+          <StatCard label={copy.home.statsCategoriesLabel} value={String(stats.categories)} />
+          <StatCard label={copy.home.statsErasLabel} value={String(stats.eras)} />
         </div>
       </section>
     </div>

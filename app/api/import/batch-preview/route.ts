@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { requireEditorApiAccess } from "@/lib/editor/auth";
-import { extractDocxText } from "@/lib/import/docx";
 import { parseCeaDocumentText } from "@/lib/import/cea-parser";
+import { detectImportSourceFormat, extractImportText } from "@/lib/import/source-text";
 
 export const runtime = "nodejs";
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
   if (entries.length === 0) {
     return NextResponse.json(
-      { error: "Debes adjuntar al menos un archivo .docx para generar la vista previa por lote." },
+      { error: "Debes adjuntar al menos un archivo .docx o .md para generar la vista previa por lote." },
       { status: 400 }
     );
   }
@@ -31,10 +31,10 @@ export async function POST(request: Request) {
       continue;
     }
 
-    if (!entry.name.toLowerCase().endsWith(".docx")) {
+    if (!detectImportSourceFormat(entry.name)) {
       errors.push({
         fileName: entry.name,
-        error: "Formato no soportado. Solo se aceptan archivos .docx."
+        error: "Formato no soportado. Solo se aceptan archivos .docx o .md."
       });
       continue;
     }
@@ -49,12 +49,12 @@ export async function POST(request: Request) {
 
     try {
       const arrayBuffer = await entry.arrayBuffer();
-      const rawText = await extractDocxText(Buffer.from(arrayBuffer));
+      const rawText = await extractImportText(Buffer.from(arrayBuffer), entry.name);
       results.push(parseCeaDocumentText(rawText, entry.name));
     } catch (error) {
       errors.push({
         fileName: entry.name,
-        error: error instanceof Error ? error.message : "No pude leer el archivo .docx."
+        error: error instanceof Error ? error.message : "No pude leer el archivo fuente."
       });
     }
   }

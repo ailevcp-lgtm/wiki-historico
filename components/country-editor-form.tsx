@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type ReactNode } from "react";
 
+import { countryOrganDefinitions, getCountryOrganLabels } from "@/lib/country-organs";
 import { countryScoreMetrics, trendOptions } from "@/lib/country-scores";
-import type { Bloc, Country, CountryScore, TimelineEra } from "@/types/wiki";
+import type { Bloc, Country, CountryOrganSlug, CountryScore, TimelineEra } from "@/types/wiki";
 
 interface CountryEditorFormProps {
   blocs: Bloc[];
@@ -48,7 +49,11 @@ export function CountryEditorForm({
   const [bloc, setBloc] = useState(initialCountry?.bloc ?? "");
   const [summary, setSummary] = useState(initialCountry?.summary ?? "");
   const [flagUrl, setFlagUrl] = useState(initialCountry?.flagUrl ?? "");
+  const [mapUrl, setMapUrl] = useState(initialCountry?.mapUrl ?? "");
   const [profileMarkdown, setProfileMarkdown] = useState(initialCountry?.profileMarkdown ?? "");
+  const [organMemberships, setOrganMemberships] = useState<CountryOrganSlug[]>(
+    initialCountry?.organMemberships ?? []
+  );
   const [scores, setScores] = useState<ScoreFormState[]>(
     initialCountry?.scores.length ? initialCountry.scores.map(scoreToFormState) : [createEmptyScore()]
   );
@@ -65,6 +70,8 @@ export function CountryEditorForm({
       summary: summary.trim(),
       profileMarkdown,
       flagUrl: flagUrl.trim() || undefined,
+      mapUrl: mapUrl.trim() || undefined,
+      organMemberships,
       scores: scores.map(formStateToScore).filter(hasSnapshotContent)
     };
 
@@ -112,6 +119,16 @@ export function CountryEditorForm({
 
   function handleRemoveScore(index: number) {
     setScores((current) => (current.length === 1 ? [createEmptyScore()] : current.filter((_, scoreIndex) => scoreIndex !== index)));
+  }
+
+  function handleOrganToggle(organSlug: CountryOrganSlug) {
+    setOrganMemberships((current) =>
+      current.includes(organSlug)
+        ? current.filter((entry) => entry !== organSlug)
+        : countryOrganDefinitions
+            .map((organ) => organ.slug)
+            .filter((entry) => entry === organSlug || current.includes(entry))
+    );
   }
 
   return (
@@ -166,10 +183,19 @@ export function CountryEditorForm({
             </select>
           </Field>
 
-          <Field label="Bandera / imagen URL">
+          <Field label="Foto del representante / imagen URL">
             <input
               value={flagUrl}
               onChange={(event) => setFlagUrl(event.target.value)}
+              className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
+              placeholder="https://... o /images/..."
+            />
+          </Field>
+
+          <Field label="Mapa URL">
+            <input
+              value={mapUrl}
+              onChange={(event) => setMapUrl(event.target.value)}
               className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
               placeholder="https://... o /images/..."
             />
@@ -183,6 +209,55 @@ export function CountryEditorForm({
             className="min-h-24 w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
           />
         </Field>
+      </section>
+
+      <section className="wiki-paper p-5 md:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-2xl">Presencia por órgano</h2>
+            <p className="mt-2 text-sm text-wiki-muted">
+              Define en qué órganos aparece este país dentro de la grilla pública.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {getCountryOrganLabels(organMemberships).map((label) => (
+              <span key={label} className="wiki-badge">
+                {label}
+              </span>
+            ))}
+            {organMemberships.length === 0 ? <span className="wiki-badge">Sin órganos</span> : null}
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {countryOrganDefinitions.map((organ) => {
+            const isActive = organMemberships.includes(organ.slug);
+
+            return (
+              <label
+                key={organ.slug}
+                className={`rounded-sm border px-4 py-4 ${
+                  isActive ? "border-[#5b1739] bg-[#f8e1e6]" : "border-wiki-border bg-white"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={isActive}
+                    onChange={() => handleOrganToggle(organ.slug)}
+                    className="mt-1"
+                  />
+                  <div>
+                    <div className="font-heading text-2xl">{organ.label}</div>
+                    <p className="text-sm text-wiki-muted">
+                      {organ.subtitle ? `Órgano ${organ.subtitle}.` : "Órgano principal de la matriz."}
+                    </p>
+                  </div>
+                </div>
+              </label>
+            );
+          })}
+        </div>
       </section>
 
       <section className="wiki-paper p-5 md:p-6">

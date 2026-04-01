@@ -24,7 +24,7 @@ export default async function AdminArticleDetailPage({
     notFound();
   }
 
-  const navigation = getNavigationData();
+  const navigation = await getNavigationData();
 
   return (
     <section className="space-y-6">
