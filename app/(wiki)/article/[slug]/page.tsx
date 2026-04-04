@@ -1,7 +1,9 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ArticleMarkdown } from "@/components/article-markdown";
+import { JsonLd } from "@/components/json-ld";
 import { Infobox } from "@/components/infobox";
 import { TableOfContents } from "@/components/table-of-contents";
 import { WikiLink } from "@/components/wiki-link";
@@ -14,10 +16,58 @@ import {
   getPublicWikiCopy,
   getPublishedArticles
 } from "@/lib/repository";
-import { formatYearRange, humanizeSlug } from "@/lib/utils";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  sanitizeMetaDescription
+} from "@/lib/seo";
+import { formatYearRange, humanizeSlug, stripMarkdown } from "@/lib/utils";
 
 export async function generateStaticParams() {
   return (await getPublishedArticles()).map((article) => ({ slug: article.slug }));
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const article = await getArticleBySlug(resolvedParams.slug);
+
+  if (!article) {
+    return buildMetadata({
+      title: "Artículo no encontrado",
+      description: "La entrada solicitada no existe en la wiki de AILE.",
+      path: `/article/${resolvedParams.slug}`,
+      noIndex: true
+    });
+  }
+
+  const normalizedContent = normalizeImportedMarkdown(article.content);
+  const description = buildArticleMetaDescription(article.summary, normalizedContent);
+  const canonicalPath = `/article/${article.slug}`;
+  const title = article.title;
+  const era = article.eraSlug ? await getEraBySlug(article.eraSlug) : undefined;
+  const keywords = [
+    article.title,
+    article.type,
+    ...(era ? [`Era ${era.number}`, era.name] : []),
+    ...article.categorySlugs.map((slug) => humanizeSlug(slug)),
+    "AILE",
+    "wiki.aile.com.ar"
+  ];
+
+  return buildMetadata({
+    title,
+    description,
+    path: canonicalPath,
+    imagePath: `${canonicalPath}/opengraph-image`,
+    imageAlt: `${article.title} en Histórico 2100`,
+    keywords,
+    type: "article"
+  });
 }
 
 export default async function ArticlePage({
@@ -41,9 +91,24 @@ export default async function ArticlePage({
     article.eraSlug ? getEraBySlug(article.eraSlug) : Promise.resolve(undefined),
     getPublicWikiCopy()
   ]);
+  const canonicalPath = `/article/${article.slug}`;
+  const summary = buildArticleMetaDescription(article.summary, normalizedContent);
+  const seoJsonLd = [
+    buildBreadcrumbJsonLd([
+      { name: "Portada", path: "/" },
+      { name: article.title, path: canonicalPath }
+    ]),
+    buildArticleJsonLd({
+      title: article.title,
+      description: summary,
+      path: canonicalPath,
+      imagePath: `${canonicalPath}/opengraph-image`
+    })
+  ];
 
   return (
     <article className="wiki-paper p-5 md:p-8">
+      <JsonLd data={seoJsonLd} />
       <header className="border-b border-wiki-border pb-5">
         <div className="flex flex-wrap gap-2">
           <span className="wiki-badge">{article.type}</span>
@@ -104,4 +169,16 @@ export default async function ArticlePage({
       </div>
     </article>
   );
+}
+
+function buildArticleMetaDescription(summary: string, content: string) {
+  if (!summary.trim() || /\[(?:Ej|ej):|\{\{/.test(summary)) {
+    const excerpt = stripMarkdown(content)
+      .replace(/^(Contexto|Origen|Antecedentes|Firma y contexto|Desarrollo)\s+/i, "")
+      .replace(/^(?:¿[^?]+\?\s*)+/g, "");
+
+    return sanitizeMetaDescription(excerpt);
+  }
+
+  return sanitizeMetaDescription(sanitizeArticleSummary(summary, content));
 }

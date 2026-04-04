@@ -1,6 +1,33 @@
+import type { Metadata } from "next";
 import { CountryPresenceBoard } from "@/components/country-presence-board";
+import { JsonLd } from "@/components/json-ld";
 import { countryOrganDefinitions } from "@/lib/country-organs";
 import { getCountryDirectory, getPublicWikiCopy } from "@/lib/repository";
+import {
+  buildBreadcrumbJsonLd,
+  buildCollectionJsonLd,
+  buildMetadata,
+  metadataBase,
+  siteTitle
+} from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPublicWikiCopy();
+  const title = `${copy.countries.title} | ${siteTitle}`;
+
+  return {
+    metadataBase,
+    ...buildMetadata({
+      title,
+      description: copy.countries.description,
+      path: "/countries",
+      imagePath: "/countries/opengraph-image",
+      imageAlt: copy.countries.title,
+      keywords: ["países", "regiones", "directorio", "wiki", "AILE"]
+    }),
+    title: { absolute: title }
+  };
+}
 
 export default async function CountriesPage() {
   const [countries, copy] = await Promise.all([getCountryDirectory(), getPublicWikiCopy()]);
@@ -11,6 +38,19 @@ export default async function CountriesPage() {
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionJsonLd({
+            title: copy.countries.title,
+            description: copy.countries.description,
+            path: "/countries"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: copy.countries.title, path: "/countries" }
+          ])
+        ]}
+      />
       <section className="wiki-paper p-5 md:p-6">
         <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">{copy.countries.eyebrow}</p>
         <h1 className="wiki-page-title mt-2">{copy.countries.title}</h1>

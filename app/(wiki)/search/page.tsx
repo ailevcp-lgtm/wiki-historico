@@ -1,8 +1,61 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { JsonLd } from "@/components/json-ld";
 import { getPublicWikiCopy, searchArticles } from "@/lib/repository";
 import { applyCopyTemplate } from "@/lib/site-config/utils";
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  metadataBase,
+  siteTitle
+} from "@/lib/seo";
 import { humanizeSlug, normalizeQueryParam } from "@/lib/utils";
+
+function buildSearchTitle(query?: string) {
+  return query ? `Búsqueda: ${query} | ${siteTitle}` : `Búsqueda | ${siteTitle}`;
+}
+
+function buildSearchDescription(query?: string) {
+  if (query) {
+    return `Resultados para "${query}" en la wiki de AILE. Explorá artículos, hitos, eras y países del escenario Histórico 2100.`;
+  }
+
+  return "Buscá artículos, hitos, eras y países del escenario Histórico 2100 en la wiki de AILE.";
+}
+
+export async function generateMetadata({
+  searchParams
+}: {
+  searchParams?: Promise<{ q?: string | string[] }>;
+}): Promise<Metadata> {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const query = normalizeQueryParam(resolvedSearchParams?.q);
+  const title = buildSearchTitle(query);
+  const description = buildSearchDescription(query ?? undefined);
+  const search = query ? `q=${encodeURIComponent(query)}` : "";
+  const fullPath = search ? `/search?${search}` : "/search";
+  const metadata = buildMetadata({
+    title,
+    description,
+    path: "/search",
+    imagePath: "/opengraph-image",
+    imageAlt: query ? `Búsqueda: ${query}` : "Búsqueda",
+    keywords: ["búsqueda", "search", "AILE", "wiki", ...(query ? [query] : [])],
+    noIndex: true
+  });
+
+  return {
+    metadataBase,
+    ...metadata,
+    title: { absolute: title },
+    openGraph: {
+      ...(metadata.openGraph ?? {}),
+      url: absoluteUrl(fullPath)
+    }
+  };
+}
 
 export default async function SearchPage({
   searchParams
@@ -18,6 +71,12 @@ export default async function SearchPage({
 
   return (
     <section className="wiki-paper p-5 md:p-6">
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Inicio", path: "/" },
+          { name: "Búsqueda", path: "/search" }
+        ])}
+      />
       <header className="border-b border-wiki-border pb-5">
         <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">{copy.search.eyebrow}</p>
         <h1 className="wiki-page-title mt-2">{copy.search.title}</h1>

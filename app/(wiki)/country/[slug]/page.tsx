@@ -1,7 +1,9 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ArticleMarkdown } from "@/components/article-markdown";
+import { JsonLd } from "@/components/json-ld";
 import { CountryOrganSummary } from "@/components/country-presence-board";
 import { CountryScorecard } from "@/components/country-scorecard";
 import { getCountryProfileMarkdown } from "@/lib/country-profile";
@@ -9,11 +11,63 @@ import {
   getArticleHitoIndex,
   getArticleIndex,
   getCountryBySlug,
+  getCountryDirectory,
   getNavigationData,
   getPublicWikiCopy
 } from "@/lib/repository";
 import { applyCopyTemplate } from "@/lib/site-config/utils";
+import {
+  buildBreadcrumbJsonLd,
+  buildCountryJsonLd,
+  buildMetadata,
+  sanitizeMetaDescription
+} from "@/lib/seo";
 import { humanizeSlug } from "@/lib/utils";
+
+export async function generateStaticParams() {
+  return (await getCountryDirectory()).map((country) => ({ slug: country.slug }));
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const country = await getCountryBySlug(resolvedParams.slug);
+
+  if (!country) {
+    return buildMetadata({
+      title: "Ficha de país no encontrada",
+      description: "La ficha solicitada no existe en la wiki de AILE.",
+      path: `/country/${resolvedParams.slug}`,
+      noIndex: true
+    });
+  }
+
+  const description = sanitizeMetaDescription(
+    `${country.summary || "Ficha país en desarrollo."} Explorala en la wiki de AILE.`
+  );
+  const canonicalPath = `/country/${country.slug}`;
+  const title = country.name;
+  const keywords = [
+    country.name,
+    "Ficha país",
+    "AILE",
+    "wiki.aile.com.ar",
+    ...(country.bloc ? [humanizeSlug(country.bloc)] : []),
+    ...(country.organMemberships ?? [])
+  ];
+
+  return buildMetadata({
+    title,
+    description,
+    path: canonicalPath,
+    imagePath: `${canonicalPath}/opengraph-image`,
+    imageAlt: `${country.name} en Histórico 2100`,
+    keywords
+  });
+}
 
 export default async function CountryPage({
   params
@@ -33,13 +87,31 @@ export default async function CountryPage({
     getNavigationData(),
     getPublicWikiCopy()
   ]);
+  const canonicalPath = `/country/${country.slug}`;
+  const description = sanitizeMetaDescription(
+    `${country.summary || copy.countryPage.summaryFallback} Explorala en la wiki de AILE.`
+  );
   const profileMarkdown = getCountryProfileMarkdown(
     country.profileMarkdown || copy.countryPage.profileFallbackMarkdown,
     { stripImages: Boolean(country.mapUrl) }
   );
+  const seoJsonLd = [
+    buildBreadcrumbJsonLd([
+      { name: "Portada", path: "/" },
+      { name: "Países", path: "/countries" },
+      { name: country.name, path: canonicalPath }
+    ]),
+    buildCountryJsonLd({
+      name: country.name,
+      description,
+      path: canonicalPath,
+      imagePath: country.mapUrl ?? country.flagUrl ?? `${canonicalPath}/opengraph-image`
+    })
+  ];
 
   return (
     <div className="space-y-6">
+      <JsonLd data={seoJsonLd} />
       <section className="wiki-paper p-5 md:p-6">
         <header className="border-b border-wiki-border pb-5">
           <div className="flex flex-wrap gap-2">

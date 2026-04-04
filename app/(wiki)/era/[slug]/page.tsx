@@ -1,10 +1,57 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/json-ld";
 import { getArticlesByEra, getEraBySlug, getNavigationData, getPublicWikiCopy } from "@/lib/repository";
+import {
+  buildBreadcrumbJsonLd,
+  buildCollectionJsonLd,
+  buildMetadata,
+  metadataBase,
+  siteTitle
+} from "@/lib/seo";
 
 export async function generateStaticParams() {
   return (await getNavigationData()).eras.map((era) => ({ slug: era.slug }));
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const era = await getEraBySlug(resolvedParams.slug);
+
+  if (!era) {
+    return {
+      metadataBase,
+      ...buildMetadata({
+        title: siteTitle,
+        description: siteTitle,
+        path: "/era",
+        imagePath: "/opengraph-image",
+        noIndex: true
+      })
+    };
+  }
+
+  const title = `Era ${era.number}: ${era.name} | ${siteTitle}`;
+  const description = `${era.theme}. ${era.description}`;
+
+  return {
+    metadataBase,
+    ...buildMetadata({
+      title,
+      description,
+      path: `/era/${era.slug}`,
+      imagePath: `/era/${era.slug}/opengraph-image`,
+      imageAlt: era.name,
+      keywords: ["era", era.name, era.theme, "AILE", "wiki"]
+    }),
+    title: { absolute: title }
+  };
 }
 
 export default async function EraPage({
@@ -20,9 +67,24 @@ export default async function EraPage({
   }
 
   const [articles, copy] = await Promise.all([getArticlesByEra(era.slug), getPublicWikiCopy()]);
+  const title = `Era ${era.number}: ${era.name}`;
 
   return (
     <div className="space-y-6">
+      <JsonLd
+        data={[
+          buildCollectionJsonLd({
+            title,
+            description: `${era.theme}. ${era.description}`,
+            path: `/era/${era.slug}`
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: "Timeline", path: "/timeline" },
+            { name: title, path: `/era/${era.slug}` }
+          ])
+        ]}
+      />
       <section className="wiki-paper overflow-hidden">
         <div className="px-5 py-6 text-white md:px-8" style={{ backgroundColor: era.color }}>
           <p className="text-sm uppercase tracking-[0.2em] text-white/85">Era {era.number}</p>

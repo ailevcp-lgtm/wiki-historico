@@ -1,15 +1,61 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/json-ld";
 import {
   getArticlesByCategory,
   getCategoryBySlug,
   getNavigationData,
   getPublicWikiCopy
 } from "@/lib/repository";
+import {
+  buildBreadcrumbJsonLd,
+  buildCollectionJsonLd,
+  buildMetadata,
+  metadataBase,
+  siteTitle
+} from "@/lib/seo";
 
 export async function generateStaticParams() {
   return (await getNavigationData()).categories.map((category) => ({ slug: category.slug }));
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const category = await getCategoryBySlug(resolvedParams.slug);
+
+  if (!category) {
+    return {
+      metadataBase,
+      ...buildMetadata({
+        title: siteTitle,
+        description: siteTitle,
+        path: "/category",
+        imagePath: "/opengraph-image",
+        noIndex: true
+      })
+    };
+  }
+
+  const title = `${category.name} | ${siteTitle}`;
+
+  return {
+    metadataBase,
+    ...buildMetadata({
+      title,
+      description: category.description,
+      path: `/category/${category.slug}`,
+      imagePath: `/category/${category.slug}/opengraph-image`,
+      imageAlt: category.name,
+      keywords: [category.name, "categoría", "AILE", "wiki"]
+    }),
+    title: { absolute: title }
+  };
 }
 
 export default async function CategoryPage({
@@ -28,9 +74,23 @@ export default async function CategoryPage({
     getArticlesByCategory(category.slug),
     getPublicWikiCopy()
   ]);
+  const title = category.name;
 
   return (
     <section className="wiki-paper p-5 md:p-6">
+      <JsonLd
+        data={[
+          buildCollectionJsonLd({
+            title,
+            description: category.description,
+            path: `/category/${category.slug}`
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: title, path: `/category/${category.slug}` }
+          ])
+        ]}
+      />
       <header className="border-b border-wiki-border pb-5">
         <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">{copy.categoryPage.eyebrow}</p>
         <h1 className="wiki-page-title mt-2">{category.name}</h1>

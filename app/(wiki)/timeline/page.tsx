@@ -1,7 +1,95 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { JsonLd } from "@/components/json-ld";
 import { getNavigationData, getPublicWikiCopy, getPublishedArticles } from "@/lib/repository";
-import { formatYearRange, normalizeQueryParam, startCase } from "@/lib/utils";
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildCollectionJsonLd,
+  buildMetadata,
+  metadataBase,
+  siteTitle
+} from "@/lib/seo";
+import { formatYearRange, humanizeSlug, normalizeQueryParam, startCase } from "@/lib/utils";
+
+function buildTimelineTitle(params: {
+  era?: string;
+  type?: string;
+  bloc?: string;
+}) {
+  const labels = [params.era, params.type, params.bloc]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => humanizeSlug(value));
+
+  return labels.length > 0 ? `Timeline del escenario - ${labels.join(" - ")} | ${siteTitle}` : `Timeline del escenario | ${siteTitle}`;
+}
+
+function buildTimelineDescription(copyDescription: string, params: { era?: string; type?: string; bloc?: string }) {
+  const filters = [params.era, params.type, params.bloc]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => humanizeSlug(value));
+
+  if (filters.length === 0) {
+    return copyDescription;
+  }
+
+  return `${copyDescription} Vista filtrada por ${filters.join(", ")}.`;
+}
+
+export async function generateMetadata({
+  searchParams
+}: {
+  searchParams?: Promise<{ era?: string | string[]; type?: string | string[]; bloc?: string | string[] }>;
+}): Promise<Metadata> {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const selectedEra = normalizeQueryParam(resolvedSearchParams?.era);
+  const selectedType = normalizeQueryParam(resolvedSearchParams?.type);
+  const selectedBloc = normalizeQueryParam(resolvedSearchParams?.bloc);
+  const copy = await getPublicWikiCopy();
+  const query = new URLSearchParams();
+
+  if (selectedEra) {
+    query.set("era", selectedEra);
+  }
+
+  if (selectedType) {
+    query.set("type", selectedType);
+  }
+
+  if (selectedBloc) {
+    query.set("bloc", selectedBloc);
+  }
+
+  const search = query.toString();
+  const canonicalPath = "/timeline";
+  const fullPath = search ? `${canonicalPath}?${search}` : canonicalPath;
+  const title = buildTimelineTitle({ era: selectedEra, type: selectedType, bloc: selectedBloc });
+  const description = buildTimelineDescription(copy.timeline.description, {
+    era: selectedEra ?? undefined,
+    type: selectedType ?? undefined,
+    bloc: selectedBloc ?? undefined
+  });
+  const metadata = buildMetadata({
+    title,
+    description,
+    path: canonicalPath,
+    imagePath: "/timeline/opengraph-image",
+    imageAlt: copy.timeline.title,
+    keywords: ["timeline", "cronologia", "hitos", "AILE", "wiki"],
+    noIndex: Boolean(search)
+  });
+
+  return {
+    metadataBase,
+    ...metadata,
+    title: { absolute: title },
+    openGraph: {
+      ...(metadata.openGraph ?? {}),
+      url: absoluteUrl(fullPath)
+    }
+  };
+}
 
 export default async function TimelinePage({
   searchParams
@@ -22,12 +110,29 @@ export default async function TimelinePage({
     .filter((article) => (selectedEra ? article.eraSlug === selectedEra : true))
     .filter((article) => (selectedType ? article.type === selectedType : true))
     .filter((article) => (selectedBloc ? article.blocSlugs?.includes(selectedBloc) : true))
-    .sort(
-    (left, right) => (left.yearStart ?? 0) - (right.yearStart ?? 0)
-  );
+    .sort((left, right) => (left.yearStart ?? 0) - (right.yearStart ?? 0));
+  const title = buildTimelineTitle({ era: selectedEra, type: selectedType, bloc: selectedBloc });
+  const description = buildTimelineDescription(copy.timeline.description, {
+    era: selectedEra ?? undefined,
+    type: selectedType ?? undefined,
+    bloc: selectedBloc ?? undefined
+  });
 
   return (
     <section className="wiki-paper p-5 md:p-6">
+      <JsonLd
+        data={[
+          buildCollectionJsonLd({
+            title,
+            description,
+            path: "/timeline"
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Inicio", path: "/" },
+            { name: "Timeline", path: "/timeline" }
+          ])
+        ]}
+      />
       <header className="border-b border-wiki-border pb-5">
         <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">{copy.timeline.eyebrow}</p>
         <h1 className="wiki-page-title mt-2">{copy.timeline.title}</h1>

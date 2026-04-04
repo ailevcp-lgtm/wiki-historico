@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { buildMetadata, metadataBase, siteTitle } from "@/lib/seo";
 import {
   getFeaturedArticle,
   getLatestArticles,
@@ -8,6 +10,24 @@ import {
   getWikiStats
 } from "@/lib/repository";
 import { formatYearRange, humanizeSlug } from "@/lib/utils";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPublicWikiCopy();
+  const title = siteTitle;
+
+  return {
+    metadataBase,
+    ...buildMetadata({
+      title,
+      description: copy.home.heroDescription,
+      path: "/",
+      imagePath: "/opengraph-image",
+      imageAlt: copy.home.heroTitle,
+      keywords: ["portada", "inicio", "wiki", "historia futurista", "AILE"]
+    }),
+    title: { absolute: title }
+  };
+}
 
 export default async function HomePage() {
   const [featuredArticle, latestArticles, stats, navigation, copy] = await Promise.all([
