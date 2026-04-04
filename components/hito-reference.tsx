@@ -7,13 +7,15 @@ interface HitoReferenceProps {
   hitoArticles: HitoReferenceIndex;
   linkClassName?: string;
   missingClassName?: string;
+  openInNewTab?: boolean;
 }
 
 export function HitoReference({
   hitoId,
   hitoArticles,
   linkClassName = "wiki-link wiki-link-track",
-  missingClassName
+  missingClassName,
+  openInNewTab = false
 }: HitoReferenceProps) {
   const resolvedReference = resolveHitoReference(hitoId, hitoArticles);
 
@@ -26,7 +28,12 @@ export function HitoReference({
   }
 
   return (
-    <Link href={resolvedReference.href} className={linkClassName}>
+    <Link
+      href={resolvedReference.href}
+      className={linkClassName}
+      target={openInNewTab ? "_blank" : undefined}
+      rel={openInNewTab ? "noreferrer" : undefined}
+    >
       {resolvedReference.label}
     </Link>
   );

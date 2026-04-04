@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleStatusForm } from "@/components/article-status-form";
 import { EditorAccessNotice } from "@/components/editor-access-notice";
 import { EditorAuthRequired } from "@/components/editor-auth-required";
+import { PublishReviewArticlesButton } from "@/components/publish-review-articles-button";
 import { requireEditorPageAccess } from "@/lib/editor/auth";
 import { getAllArticles } from "@/lib/repository";
 import { formatYearRange, normalizeQueryParam } from "@/lib/utils";
@@ -35,12 +36,15 @@ export default async function AdminArticlesPage({
               Desde esta mesa editorial puedes publicarlos, dejarlos en borrador o editar su contenido.
             </p>
           </div>
-          <Link
-            href="/admin/articles/new"
-            className="rounded-sm border border-wiki-border bg-white px-4 py-2 text-sm font-semibold"
-          >
-            Nuevo artículo
-          </Link>
+          <div className="flex flex-col items-start gap-3">
+            <PublishReviewArticlesButton />
+            <Link
+              href="/admin/articles/new"
+              className="rounded-sm border border-wiki-border bg-white px-4 py-2 text-sm font-semibold"
+            >
+              Nuevo artículo
+            </Link>
+          </div>
         </div>
       </header>
 

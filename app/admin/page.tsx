@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { EditorAccessNotice } from "@/components/editor-access-notice";
 import { EditorAuthRequired } from "@/components/editor-auth-required";
+import { ResetWikiContentButton } from "@/components/reset-wiki-content-button";
 import { requireEditorPageAccess } from "@/lib/editor/auth";
 
 const cards = [
@@ -68,6 +69,19 @@ export default async function AdminDashboardPage() {
             <p className="mt-3 text-wiki-muted">{card.description}</p>
           </Link>
         ))}
+      </section>
+
+      <section className="wiki-paper p-5 md:p-6">
+        <p className="text-sm uppercase tracking-[0.18em] text-wiki-muted">Mantenimiento</p>
+        <h2 className="mt-2 font-heading text-2xl">Reiniciar pruebas</h2>
+        <p className="mt-3 max-w-3xl text-wiki-muted">
+          Si necesitas volver a empezar desde cero, esta acción limpia artículos importados,
+          overrides editoriales de países y la cola de revisión, sin tocar la configuración de la wiki.
+        </p>
+
+        <div className="mt-5">
+          <ResetWikiContentButton />
+        </div>
       </section>
     </section>
   );

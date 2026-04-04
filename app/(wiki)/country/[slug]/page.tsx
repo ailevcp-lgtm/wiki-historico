@@ -95,7 +95,12 @@ export default async function CountryPage({
           <section className="wiki-paper p-5">
             <h2 className="font-heading text-2xl">{copy.countryPage.profileSectionTitle}</h2>
             <div className="mt-4">
-              <ArticleMarkdown articleTitles={articleTitles} hitoArticles={hitoArticles} markdown={profileMarkdown} />
+              <ArticleMarkdown
+                articleTitles={articleTitles}
+                hitoArticles={hitoArticles}
+                markdown={profileMarkdown}
+                openInternalLinksInNewTab
+              />
             </div>
           </section>
 

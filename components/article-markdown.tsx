@@ -17,9 +17,15 @@ interface ArticleMarkdownProps {
   hitoArticles: HitoReferenceIndex;
   articleTitles: Record<string, string>;
   markdown: string;
+  openInternalLinksInNewTab?: boolean;
 }
 
-export function ArticleMarkdown({ articleTitles, hitoArticles, markdown }: ArticleMarkdownProps) {
+export function ArticleMarkdown({
+  articleTitles,
+  hitoArticles,
+  markdown,
+  openInternalLinksInNewTab = false
+}: ArticleMarkdownProps) {
   const preparedMarkdown = transformWikiLinks(
     transformHitoReferences(normalizeImportedMarkdown(markdown), hitoArticles),
     articleTitles
@@ -30,7 +36,7 @@ export function ArticleMarkdown({ articleTitles, hitoArticles, markdown }: Artic
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         urlTransform={(url) => {
-          if (url.startsWith("wiki:") || url.startsWith("country:")) {
+          if (url.startsWith("wiki:") || url.startsWith("country:") || url.startsWith("hito:")) {
             return url;
           }
 
@@ -54,6 +60,7 @@ export function ArticleMarkdown({ articleTitles, hitoArticles, markdown }: Artic
                   hitoId={hitoId}
                   hitoArticles={hitoArticles}
                   missingClassName="text-wiki-muted"
+                  openInNewTab={openInternalLinksInNewTab}
                 />
               );
             }
@@ -65,6 +72,7 @@ export function ArticleMarkdown({ articleTitles, hitoArticles, markdown }: Artic
                   slug={slug}
                   label={flattenNodeText(children)}
                   exists={Boolean(articleTitles[slug])}
+                  openInNewTab={openInternalLinksInNewTab}
                 />
               );
             }
@@ -77,6 +85,7 @@ export function ArticleMarkdown({ articleTitles, hitoArticles, markdown }: Artic
                   slug={slug}
                   label={flattenNodeText(children)}
                   href={`/country/${slug}`}
+                  openInNewTab={openInternalLinksInNewTab}
                 />
               );
             }

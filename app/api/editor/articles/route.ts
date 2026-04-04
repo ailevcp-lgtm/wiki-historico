@@ -1,10 +1,10 @@
-import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { saveArticle } from "@/lib/content/store";
 import { requireEditorApiAccess } from "@/lib/editor/auth";
 import { parseArticlePayload } from "@/lib/editor/payloads";
-import { getEditableArticleBySlug, getNavigationData } from "@/lib/repository";
+import { getEditableArticleBySlug } from "@/lib/repository";
+import { revalidateArticlePaths } from "@/lib/wiki-revalidation";
 
 export const runtime = "nodejs";
 
@@ -42,36 +42,5 @@ export async function POST(request: Request) {
       },
       { status: 500 }
     );
-  }
-}
-
-async function revalidateArticlePaths(article: {
-  slug: string;
-  categorySlugs: string[];
-  eraSlug?: string;
-}) {
-  revalidatePath("/");
-  revalidatePath("/timeline");
-  revalidatePath("/search");
-  revalidatePath("/admin/articles");
-  revalidatePath(`/admin/articles/${article.slug}`);
-  revalidatePath(`/article/${article.slug}`);
-
-  if (article.eraSlug) {
-    revalidatePath(`/era/${article.eraSlug}`);
-  }
-
-  for (const categorySlug of article.categorySlugs) {
-    revalidatePath(`/category/${categorySlug}`);
-  }
-
-  const navigation = await getNavigationData();
-
-  for (const era of navigation.eras) {
-    revalidatePath(`/era/${era.slug}`);
-  }
-
-  for (const category of navigation.categories) {
-    revalidatePath(`/category/${category.slug}`);
   }
 }

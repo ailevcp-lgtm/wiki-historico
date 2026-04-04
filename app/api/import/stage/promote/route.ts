@@ -3,7 +3,13 @@ import { NextResponse } from "next/server";
 
 import { promoteSourceDocument } from "@/lib/content/store";
 import { requireEditorApiAccess } from "@/lib/editor/auth";
+import { getEditableArticleBySlug, getEditableCountryBySlug } from "@/lib/repository";
 import { getSourceDocumentById } from "@/lib/staging/store";
+import {
+  revalidateArticlePaths,
+  revalidateCorePaths,
+  revalidateCountryPaths
+} from "@/lib/wiki-revalidation";
 import type { BatchPromotionFailure, BatchPromotionResult, PromotionResult } from "@/types/staging";
 
 export const runtime = "nodejs";
@@ -66,7 +72,7 @@ export async function POST(request: Request) {
     try {
       const result = await promoteSourceDocument(id);
       promoted.push(result);
-      revalidatePromotionPaths(id, result);
+      await revalidatePromotionPaths(id, result);
     } catch (error) {
       failed.push({
         documentId: id,
@@ -85,19 +91,27 @@ export async function POST(request: Request) {
   return NextResponse.json(payload);
 }
 
-function revalidatePromotionPaths(id: string, result: PromotionResult) {
-  revalidatePath("/");
-  revalidatePath("/timeline");
-  revalidatePath("/search");
-  revalidatePath("/admin/articles");
-  revalidatePath("/admin/countries");
-  revalidatePath("/admin/review");
+async function revalidatePromotionPaths(id: string, result: PromotionResult) {
+  await revalidateCorePaths();
   revalidatePath(`/admin/review/${id}`);
 
   if (result.detectedKind === "country") {
-    revalidatePath("/countries");
-    revalidatePath(result.targetPath);
-    revalidatePath(`/country/${result.targetSlug}`);
+    const country = await getEditableCountryBySlug(result.targetSlug);
+
+    if (country) {
+      await revalidateCountryPaths(country);
+    } else {
+      revalidatePath(result.targetPath);
+      revalidatePath(`/country/${result.targetSlug}`);
+    }
+
+    return;
+  }
+
+  const article = await getEditableArticleBySlug(result.targetSlug);
+
+  if (article) {
+    await revalidateArticlePaths(article);
     return;
   }
 

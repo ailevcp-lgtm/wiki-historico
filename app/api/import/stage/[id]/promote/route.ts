@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 
 import { requireEditorApiAccess } from "@/lib/editor/auth";
 import { promoteSourceDocument } from "@/lib/content/store";
+import { getEditableArticleBySlug, getEditableCountryBySlug } from "@/lib/repository";
+import {
+  revalidateArticlePaths,
+  revalidateCorePaths,
+  revalidateCountryPaths
+} from "@/lib/wiki-revalidation";
 
 export const runtime = "nodejs";
 
@@ -21,17 +27,26 @@ export async function POST(
   try {
     const result = await promoteSourceDocument(id);
 
-    revalidatePath("/");
-    revalidatePath("/timeline");
-    revalidatePath("/search");
-    revalidatePath("/admin/articles");
-    revalidatePath("/admin/countries");
-    revalidatePath("/admin/review");
+    await revalidateCorePaths();
     revalidatePath(`/admin/review/${id}`);
+
     if (result.detectedKind === "country") {
-      revalidatePath("/countries");
-      revalidatePath(result.targetPath);
-      revalidatePath(`/country/${result.targetSlug}`);
+      const country = await getEditableCountryBySlug(result.targetSlug);
+
+      if (country) {
+        await revalidateCountryPaths(country);
+      } else {
+        revalidatePath(result.targetPath);
+        revalidatePath(`/country/${result.targetSlug}`);
+      }
+    } else {
+      const article = await getEditableArticleBySlug(result.targetSlug);
+
+      if (article) {
+        await revalidateArticlePaths(article);
+      } else {
+        revalidatePath(`/article/${result.targetSlug}`);
+      }
     }
 
     return NextResponse.json(result);

@@ -96,6 +96,11 @@ export function normalizeImportedMarkdown(markdown: string): string {
       continue;
     }
 
+    if (isStandaloneHitoReferenceLine(trimmed)) {
+      normalizedLines.push(trimmed);
+      continue;
+    }
+
     normalizedLines.push(linkCountryMentionsInLine(trimmed));
   }
 
@@ -308,6 +313,10 @@ function shouldLinkHitoReferences(line: string) {
   }
 
   return /H-?\s*\d{1,3}/i.test(trimmed);
+}
+
+function isStandaloneHitoReferenceLine(line: string) {
+  return /^(?:[-+*]\s+)?H-?\s*\d{1,3}\b/i.test(line);
 }
 
 function stripListPrefix(line: string) {

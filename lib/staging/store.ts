@@ -32,26 +32,81 @@ export function getStagingMode(): StagingMode {
 }
 
 export async function stageImportPreviews(previews: ImportPreviewResult[]): Promise<StagedSourceDocument[]> {
-  const rows = previews.map(previewToRow);
+  const rows = dedupeIncomingRows(previews.map(previewToRow));
 
   if (getStagingMode() === "supabase") {
     const supabase = await createSupabaseAdminClient();
-    const { data, error } = await supabase
+    const { data: existingRows, error: existingRowsError } = await supabase
       .from("source_documents")
-      .insert(rows.map(stripTimestamps))
       .select("*");
 
-    if (error) {
-      throw new Error(error.message);
+    if (existingRowsError) {
+      throw new Error(existingRowsError.message);
     }
 
-    return (data ?? []).map((row) => mapRow(row as SourceDocumentRow, "supabase"));
+    const existingByKey = new Map(
+      ((existingRows ?? []) as SourceDocumentRow[]).map((row) => [buildSourceDocumentKeyFromRow(row), row] as const)
+    );
+    const stagedRows: SourceDocumentRow[] = [];
+
+    for (const row of rows) {
+      const existing = existingByKey.get(buildSourceDocumentKeyFromRow(row));
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from("source_documents")
+          .update(stripTimestamps(mergeSourceDocumentRow(existing, row)))
+          .eq("id", existing.id)
+          .select("*")
+          .single();
+
+        if (error || !data) {
+          throw new Error(error?.message ?? "No pude actualizar el documento staged.");
+        }
+
+        stagedRows.push(data as SourceDocumentRow);
+        continue;
+      }
+
+      const { data, error } = await supabase
+        .from("source_documents")
+        .insert(stripTimestamps(row))
+        .select("*")
+        .single();
+
+      if (error || !data) {
+        throw new Error(error?.message ?? "No pude guardar el documento staged.");
+      }
+
+      stagedRows.push(data as SourceDocumentRow);
+    }
+
+    return stagedRows.map((row) => mapRow(row, "supabase"));
   }
 
   const existing = await readLocalRows();
-  const nextRows = [...rows, ...existing];
+  const nextRows = [...rows];
+
+  for (const row of existing) {
+    const rowKey = buildSourceDocumentKeyFromRow(row);
+    const nextIndex = nextRows.findIndex((entry) => buildSourceDocumentKeyFromRow(entry) === rowKey);
+
+    if (nextIndex >= 0) {
+      nextRows[nextIndex] = mergeSourceDocumentRow(row, nextRows[nextIndex]);
+      continue;
+    }
+
+    nextRows.push(row);
+  }
+
   await writeLocalRows(nextRows);
-  return rows.map((row) => mapRow(row, "local"));
+  return rows.map((row) => {
+    const storedRow = nextRows.find(
+      (entry) => buildSourceDocumentKeyFromRow(entry) === buildSourceDocumentKeyFromRow(row)
+    );
+
+    return mapRow(storedRow ?? row, "local");
+  });
 }
 
 export async function listSourceDocuments(): Promise<StagedSourceDocument[]> {
@@ -62,7 +117,7 @@ export async function listSourceDocuments(): Promise<StagedSourceDocument[]> {
     const { data, error } = await supabase
       .from("source_documents")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("updated_at", { ascending: false });
 
     if (error) {
       throw new Error(error.message);
@@ -73,6 +128,27 @@ export async function listSourceDocuments(): Promise<StagedSourceDocument[]> {
 
   const rows = await readLocalRows();
   return rows.map((row) => mapRow(row, "local"));
+}
+
+export async function clearSourceDocuments(): Promise<number> {
+  const documents = await listSourceDocuments();
+
+  if (getStagingMode() === "supabase") {
+    const supabase = await createSupabaseAdminClient();
+    const { error } = await supabase
+      .from("source_documents")
+      .delete()
+      .not("id", "is", null);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return documents.length;
+  }
+
+  await writeLocalRows([]);
+  return documents.length;
 }
 
 export async function getSourceDocumentById(id: string): Promise<StagedSourceDocument | undefined> {
@@ -100,13 +176,17 @@ export async function getSourceDocumentById(id: string): Promise<StagedSourceDoc
 
 export async function updateSourceDocumentStatus(
   id: string,
-  importStatus: SourceImportStatus
+  importStatus: SourceImportStatus,
+  targetSlug?: string
 ): Promise<StagedSourceDocument | undefined> {
   if (getStagingMode() === "supabase") {
     const supabase = await createSupabaseAdminClient();
     const { data, error } = await supabase
       .from("source_documents")
-      .update({ import_status: importStatus })
+      .update({
+        import_status: importStatus,
+        ...(targetSlug ? { target_slug: targetSlug } : {})
+      })
       .eq("id", id)
       .select("*")
       .maybeSingle();
@@ -124,6 +204,7 @@ export async function updateSourceDocumentStatus(
       ? {
           ...row,
           import_status: importStatus,
+          target_slug: targetSlug ?? row.target_slug,
           updated_at: new Date().toISOString()
         }
       : row
@@ -202,6 +283,31 @@ function previewToRow(preview: ImportPreviewResult): SourceDocumentRow {
   };
 }
 
+function dedupeIncomingRows(rows: SourceDocumentRow[]) {
+  const deduped = new Map<string, SourceDocumentRow>();
+
+  for (const row of rows) {
+    deduped.set(buildSourceDocumentKeyFromRow(row), row);
+  }
+
+  return [...deduped.values()];
+}
+
+function mergeSourceDocumentRow(existing: SourceDocumentRow, next: SourceDocumentRow): SourceDocumentRow {
+  return {
+    ...existing,
+    source_name: next.source_name,
+    source_format: next.source_format,
+    detected_kind: next.detected_kind,
+    raw_text: next.raw_text,
+    normalized_payload: next.normalized_payload,
+    target_slug: next.target_slug,
+    import_status: next.import_status,
+    parse_notes: next.parse_notes,
+    updated_at: next.updated_at
+  };
+}
+
 function inferSourceFormat(fileName: string) {
   const normalized = fileName.toLowerCase();
 
@@ -222,6 +328,25 @@ function deriveTargetSlug(preview: ImportPreviewResult) {
   }
 
   return null;
+}
+
+function buildSourceDocumentKeyFromRow(row: Pick<SourceDocumentRow, "detected_kind" | "target_slug" | "source_name" | "normalized_payload">) {
+  if (row.detected_kind === "hito") {
+    const preview = row.normalized_payload;
+    const hitoId = preview.kind === "hito" ? preview.draft.hitoId : undefined;
+
+    return hitoId ? `hito:${normalizeSourceDocumentKey(hitoId)}` : `hito:${normalizeSourceDocumentKey(row.target_slug ?? row.source_name)}`;
+  }
+
+  if (row.detected_kind === "country") {
+    return `country:${normalizeSourceDocumentKey(row.target_slug ?? row.source_name)}`;
+  }
+
+  return `unknown:${normalizeSourceDocumentKey(row.source_name)}`;
+}
+
+function normalizeSourceDocumentKey(value: string) {
+  return value.trim().toLowerCase();
 }
 
 function mapRow(row: SourceDocumentRow, stagingMode: StagingMode): StagedSourceDocument {
@@ -258,7 +383,7 @@ async function readLocalRows(): Promise<SourceDocumentRow[]> {
   await ensureLocalStore();
   const content = await fs.readFile(localFilePath, "utf8");
   const data = JSON.parse(content) as SourceDocumentRow[];
-  return data.sort((left, right) => right.created_at.localeCompare(left.created_at));
+  return data.sort((left, right) => right.updated_at.localeCompare(left.updated_at));
 }
 
 async function writeLocalRows(rows: SourceDocumentRow[]): Promise<void> {

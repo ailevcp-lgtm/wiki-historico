@@ -147,15 +147,15 @@ export async function promoteSourceDocument(id: string): Promise<PromotionResult
 
   if (document.detectedKind === "hito" && document.normalizedPayload.kind === "hito") {
     const article = mapDraftToArticle(document.normalizedPayload.draft);
-    await saveArticle(article);
-    await updateSourceDocumentStatus(id, "imported");
+    const savedArticle = await saveImportedArticle(article);
+    await updateSourceDocumentStatus(id, "imported", savedArticle.slug);
 
     return {
       documentId: id,
       detectedKind: "hito",
       importStatus: "imported",
-      targetSlug: article.slug,
-      targetPath: `/admin/articles?slug=${article.slug}`,
+      targetSlug: savedArticle.slug,
+      targetPath: `/admin/articles?slug=${savedArticle.slug}`,
       destinationMode: getStagingMode()
     };
   }
@@ -163,7 +163,7 @@ export async function promoteSourceDocument(id: string): Promise<PromotionResult
   if (document.detectedKind === "country" && document.normalizedPayload.kind === "country") {
     const country = mapDraftToCountry(document.normalizedPayload.draft);
     await saveCountry(country, { mergeScores: true });
-    await updateSourceDocumentStatus(id, "imported");
+    await updateSourceDocumentStatus(id, "imported", country.slug);
 
     return {
       documentId: id,
@@ -202,6 +202,17 @@ export async function saveArticle(article: Article): Promise<Article> {
   return article;
 }
 
+export async function saveImportedArticle(article: Article): Promise<Article> {
+  const existing = await findStoredArticleForImport(article);
+  const importedArticle = mergeImportedArticleWithStored(
+    existing ? { ...article, slug: existing.slug } : article,
+    existing
+  );
+
+  await persistArticle(importedArticle);
+  return importedArticle;
+}
+
 export async function saveCountry(
   country: Country,
   options?: { mergeScores?: boolean }
@@ -212,6 +223,83 @@ export async function saveCountry(
 
   await persistCountry(nextCountry);
   return nextCountry;
+}
+
+export async function publishAllReviewArticles(): Promise<Article[]> {
+  if (getStagingMode() === "supabase") {
+    const supabase = await createSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from("articles")
+      .update({ status: "published" })
+      .eq("status", "review")
+      .select("*");
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map((row) => mapArticleRow(row as ArticleRow));
+  }
+
+  const store = await readLocalStore();
+  const updatedArticles: Article[] = [];
+
+  store.articles = store.articles.map((article) => {
+    if (article.status !== "review") {
+      return article;
+    }
+
+    const updated = {
+      ...article,
+      status: "published" as const
+    };
+    updatedArticles.push(updated);
+    return updated;
+  });
+
+  if (updatedArticles.length > 0) {
+    await writeLocalStore(store);
+  }
+
+  return updatedArticles;
+}
+
+export async function clearPersistedWikiContent(): Promise<{
+  articles: Article[];
+  countries: Country[];
+}> {
+  const [articles, countries] = await Promise.all([listPersistedArticles(), listPersistedCountries()]);
+
+  if (getStagingMode() === "supabase") {
+    const supabase = await createSupabaseAdminClient();
+
+    const { error: deleteArticlesError } = await supabase
+      .from("articles")
+      .delete()
+      .not("id", "is", null);
+
+    if (deleteArticlesError) {
+      throw new Error(deleteArticlesError.message);
+    }
+
+    const { error: deleteCountriesError } = await supabase
+      .from("countries")
+      .delete()
+      .not("id", "is", null);
+
+    if (deleteCountriesError) {
+      throw new Error(deleteCountriesError.message);
+    }
+
+    return { articles, countries };
+  }
+
+  await writeLocalStore({
+    articles: [],
+    countries: []
+  });
+
+  return { articles, countries };
 }
 
 async function persistArticle(article: Article): Promise<void> {
@@ -309,6 +397,27 @@ async function findStoredArticleBySlug(slug: string): Promise<Article | undefine
   return persisted.find((article) => article.slug === slug);
 }
 
+async function findStoredArticleByHitoId(hitoId: string): Promise<Article | undefined> {
+  const persisted = await listPersistedArticles();
+  const normalizedHitoId = normalizeImportedHitoId(hitoId);
+
+  return persisted.find(
+    (article) => normalizeImportedHitoId(article.hitoId) === normalizedHitoId
+  );
+}
+
+async function findStoredArticleForImport(article: Pick<Article, "slug" | "hitoId">) {
+  if (article.hitoId) {
+    const matchByHitoId = await findStoredArticleByHitoId(article.hitoId);
+
+    if (matchByHitoId) {
+      return matchByHitoId;
+    }
+  }
+
+  return findStoredArticleBySlug(article.slug);
+}
+
 async function findStoredCountryBySlug(slug: string): Promise<Country | undefined> {
   const persisted = await listPersistedCountries();
   const seededCountries = await getSeedCountries();
@@ -347,6 +456,10 @@ async function ensureLocalStore(): Promise<void> {
 function upsertBySlug<T extends { slug: string }>(items: T[], nextItem: T): T[] {
   const remaining = items.filter((item) => item.slug !== nextItem.slug);
   return [nextItem, ...remaining];
+}
+
+function normalizeImportedHitoId(value?: string) {
+  return value?.trim().toLowerCase();
 }
 
 function mapStoredCountry(country: Country): Country {
@@ -402,6 +515,22 @@ function mapCountryScoreRow(row: CountryScoreRow): CountryScore {
 
 function countryScoreKey(score: CountryScore): string {
   return `${score.eraSlug ?? "sin-era"}::${score.hitoId ?? "sin-hito"}`;
+}
+
+function mergeImportedArticleWithStored(nextArticle: Article, existing?: Article): Article {
+  if (!existing) {
+    return nextArticle;
+  }
+
+  return {
+    ...existing,
+    ...nextArticle,
+    slug: existing.slug,
+    status: existing.status,
+    featured: existing.featured ?? nextArticle.featured,
+    relatedSlugs:
+      nextArticle.relatedSlugs.length > 0 ? nextArticle.relatedSlugs : existing.relatedSlugs
+  };
 }
 
 function mergeCountryWithStored(nextCountry: Country, existing?: Country): Country {
