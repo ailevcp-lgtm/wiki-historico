@@ -113,12 +113,46 @@ export function WikiShell({
           />
 
           <aside
-            className={`wiki-sidebar fixed left-0 z-40 w-[280px] overflow-y-auto border-r border-wiki-border bg-wiki-page p-4 transition-transform lg:sticky lg:w-[240px] lg:translate-x-0 ${
+            className={`wiki-sidebar fixed left-0 z-40 w-[280px] overflow-y-auto border-r border-wiki-border bg-wiki-page p-4 transition-transform lg:hidden ${
               isOpen ? "translate-x-0" : "-translate-x-full"
             }`}
             style={{
               top: headerHeight,
               height: `calc(100vh - ${headerHeight}px)`
+            }}
+          >
+            <NavSection title={copy.erasSectionTitle}>
+              {eras.map((era) => (
+                <NavItem
+                  key={era.slug}
+                  href={`/era/${era.slug}`}
+                  active={pathname === `/era/${era.slug}`}
+                  onNavigate={() => setIsOpen(false)}
+                >
+                  {copy.eraLabelPrefix} {era.number} ({era.yearStart}-{era.yearEnd})
+                </NavItem>
+              ))}
+            </NavSection>
+
+            <NavSection title={copy.blocsSectionTitle}>
+              {blocs.map((bloc) => (
+                <NavItem
+                  key={bloc.slug}
+                  href={`/bloc/${bloc.slug}`}
+                  active={pathname === `/bloc/${bloc.slug}` || (pathname === "/countries" && selectedBloc === bloc.slug)}
+                  onNavigate={() => setIsOpen(false)}
+                >
+                  {bloc.name}
+                </NavItem>
+              ))}
+            </NavSection>
+          </aside>
+
+          <aside
+            className="wiki-sidebar sticky top-0 hidden h-fit w-[240px] self-start overflow-y-auto border-r border-wiki-border bg-wiki-page p-4 lg:block"
+            style={{
+              top: headerHeight,
+              maxHeight: `calc(100vh - ${headerHeight}px)`
             }}
           >
             <NavSection title={copy.erasSectionTitle}>

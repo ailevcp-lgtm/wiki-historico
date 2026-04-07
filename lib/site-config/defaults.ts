@@ -9,7 +9,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     searchButtonLabel: "Buscar",
     navigationSectionTitle: "Navegación",
     homeLabel: "Portada",
-    timelineLabel: "Línea del tiempo",
+    timelineLabel: "Timeline",
     searchLabel: "Búsqueda",
     countriesLabel: "Países",
     erasSectionTitle: "Eras",
@@ -22,8 +22,8 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     heroTitle: "Histórico 2026-2100",
     heroDescription:
       "Una wiki ficticia para seguir la evolución del mundo desde la crisis inicial hasta la cumbre que discute quién tiene derecho al futuro.",
-    timelineSectionTitle: "Línea del tiempo base",
-    timelineSectionLinkLabel: "Ver línea del tiempo completa",
+    timelineSectionTitle: "Cronología base",
+    timelineSectionLinkLabel: "Ver timeline completo",
     blocsSectionTitle: "Acceso por bloques",
     blocsSectionKicker: "Mapa político resumido",
     directorySectionTitle: "Directorio de países",
@@ -33,7 +33,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
   },
   timeline: {
     eyebrow: "Vista global",
-    title: "Línea del tiempo del escenario",
+    title: "Timeline del escenario",
     description:
       "Recorrido cronológico de los hitos principales del universo ficticio desde 2026 hasta 2100.",
     allErasLabel: "Todas las eras",
@@ -59,7 +59,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
       "Esta matriz resume qué países y regiones aparecen en cada órgano del escenario. Cada fila abre la ficha individual del país para seguir su información detallada.",
     organCountDescription: "Países con presencia en este órgano.",
     matrixTitle: "Matriz de presencia institucional",
-    matrixKicker: ""
+    matrixKicker: "Orden base tomado del archivo CSV"
   },
   countryPage: {
     badgeLabel: "Ficha país",
@@ -91,7 +91,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     noBlocValue: "Sin bloque",
     lastMilestoneLabel: "Último hito",
     noMilestoneValue: "Sin hito",
-    historyTitle: "Cambios a través de las eras",
+    historyTitle: "Historial de snapshots",
     referenceColumnLabel: "Referencia"
   },
   countryPresenceBoard: {
