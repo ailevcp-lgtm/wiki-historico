@@ -91,7 +91,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     noBlocValue: "Sin bloque",
     lastMilestoneLabel: "Último hito",
     noMilestoneValue: "Sin hito",
-    historyTitle: "Historial de snapshots",
+    historyTitle: "Cambios a través de las eras",
     referenceColumnLabel: "Referencia"
   },
   countryPresenceBoard: {

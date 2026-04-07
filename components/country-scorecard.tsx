@@ -105,7 +105,9 @@ export function CountryScorecard({
       </section>
 
       <section className="wiki-paper min-w-0 overflow-hidden p-4">
-        <h2 className="font-heading text-2xl">{copy.historyTitle}</h2>
+        <h2 className="font-heading text-2xl">
+          {normalizeHistoryTitle(copy.historyTitle)}
+        </h2>
         <div className="mt-4 max-w-full overflow-x-auto">
           <table className="min-w-[720px] w-full border-collapse text-sm">
             <thead className="bg-wiki-page">
@@ -148,6 +150,16 @@ export function CountryScorecard({
       </section>
     </div>
   );
+}
+
+function normalizeHistoryTitle(value: string) {
+  const trimmed = value.trim();
+
+  if (!trimmed || /historial de snapshots/i.test(trimmed)) {
+    return "Cambios a través de las eras";
+  }
+
+  return trimmed;
 }
 
 function StatCard({ label, value }: { label: string; value: ReactNode }) {
