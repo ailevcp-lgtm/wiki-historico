@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
+import { ReadingProgressBadge } from "@/components/reading-progress";
+import { articleTypeLabelEs } from "@/lib/article-type-label";
 import { getArticlesByEra, getEraBySlug, getNavigationData, getPublicWikiCopy } from "@/lib/repository";
 import {
   buildBreadcrumbJsonLd,
@@ -80,7 +82,7 @@ export default async function EraPage({
           }),
           buildBreadcrumbJsonLd([
             { name: "Inicio", path: "/" },
-            { name: "Timeline", path: "/timeline" },
+            { name: "Línea del tiempo", path: "/timeline" },
             { name: title, path: `/era/${era.slug}` }
           ])
         ]}
@@ -111,11 +113,15 @@ export default async function EraPage({
               className="rounded-sm border border-wiki-border bg-white p-4 transition-shadow hover:shadow-wiki"
             >
               <div className="flex flex-wrap gap-2">
-                <span className="wiki-badge">{article.type}</span>
+                <span className="wiki-badge">{articleTypeLabelEs(article.type)}</span>
                 {article.hitoId ? <span className="wiki-badge">{article.hitoId}</span> : null}
+                {article.eraSlug !== era.slug ? (
+                  <span className="wiki-badge">Previo a la Era {era.number}</span>
+                ) : null}
+                {article.hitoId ? <ReadingProgressBadge slug={article.slug} /> : null}
               </div>
               <h3 className="mt-3 font-heading text-2xl">
-                <Link href={`/article/${article.slug}`} className="wiki-link-track">
+                <Link href={`/article/${article.slug}`} className="wiki-link-track wiki-news-link">
                   {article.title}
                 </Link>
               </h3>

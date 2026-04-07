@@ -40,8 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.8
     })),
-    ...navigation.categories.map((category) => ({
-      url: absoluteUrl(`/category/${category.slug}`),
+    ...navigation.blocs.map((bloc) => ({
+      url: absoluteUrl(`/bloc/${bloc.slug}`),
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.75

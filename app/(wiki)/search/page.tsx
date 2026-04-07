@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
+import { articleTypeLabelEs } from "@/lib/article-type-label";
 import { getPublicWikiCopy, searchArticles } from "@/lib/repository";
 import { applyCopyTemplate } from "@/lib/site-config/utils";
 import {
@@ -113,25 +114,16 @@ export default async function SearchPage({
         {results.map(({ article, excerpt }) => (
           <article key={article.slug} className="rounded-sm border border-wiki-border bg-white p-4">
             <div className="flex flex-wrap gap-2">
-              <span className="wiki-badge">{article.type}</span>
+              <span className="wiki-badge">{articleTypeLabelEs(article.type)}</span>
               {article.yearStart ? <span className="wiki-badge">{article.yearStart}</span> : null}
               {article.eraSlug ? <span className="wiki-badge">{humanizeSlug(article.eraSlug)}</span> : null}
             </div>
             <h2 className="mt-3 font-heading text-2xl">
-              <Link href={`/article/${article.slug}`} className="wiki-link-track">
+              <Link href={`/article/${article.slug}`} className="wiki-link-track wiki-news-link">
                 {article.title}
               </Link>
             </h2>
             <p className="mt-2 text-sm text-wiki-muted">{excerpt}</p>
-            {article.categorySlugs.length > 0 ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {article.categorySlugs.map((categorySlug) => (
-                  <Link key={categorySlug} href={`/category/${categorySlug}`} className="wiki-badge">
-                    {humanizeSlug(categorySlug)}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
           </article>
         ))}
       </div>

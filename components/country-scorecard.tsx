@@ -18,12 +18,14 @@ export function CountryScorecard({
   country,
   copy,
   eras,
-  hitoArticles
+  hitoArticles,
+  showSnapshotsStat = true
 }: {
   country: Country;
   copy: CountryScorecardCopy;
   eras: TimelineEra[];
   hitoArticles: HitoReferenceIndex;
+  showSnapshotsStat?: boolean;
 }) {
   const orderedScores = sortCountryScores(country.scores, eras);
   const latestScore = orderedScores[orderedScores.length - 1];
@@ -38,17 +40,19 @@ export function CountryScorecard({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="wiki-paper p-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+    <div className="space-y-6 min-w-0">
+      <section className="wiki-paper min-w-0 overflow-hidden p-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
             <h2 className="font-heading text-2xl">{copy.latestTitle}</h2>
-            <p className="mt-2 text-sm text-wiki-muted">
+            <p className="mt-2 min-w-0 text-sm text-wiki-muted">
               {renderScoreReference(latestScore, eras, hitoArticles)}
             </p>
           </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            <StatCard label={copy.snapshotsLabel} value={String(orderedScores.length)} />
+          <div className="grid min-w-0 gap-2 sm:grid-cols-3">
+            {showSnapshotsStat ? (
+              <StatCard label={copy.snapshotsLabel} value={String(orderedScores.length)} />
+            ) : null}
             <StatCard
               label={copy.blocLabel}
               value={country.bloc ? humanizeSlug(country.bloc) : copy.noBlocValue}
@@ -71,7 +75,7 @@ export function CountryScorecard({
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             {countryScoreMetrics.map((metric) => {
               const value = getCountryScoreValue(latestScore, metric.valueKey);
               const trend = getCountryScoreTrend(latestScore, metric.trendKey);
@@ -94,16 +98,16 @@ export function CountryScorecard({
         </div>
 
         {latestScore.notes ? (
-          <div className="mt-5 rounded-sm border border-wiki-border bg-wiki-page p-3 text-sm text-wiki-muted">
+          <div className="mt-5 min-w-0 rounded-sm border border-wiki-border bg-wiki-page p-3 text-sm text-wiki-muted break-words">
             {latestScore.notes}
           </div>
         ) : null}
       </section>
 
-      <section className="wiki-paper p-4">
+      <section className="wiki-paper min-w-0 overflow-hidden p-4">
         <h2 className="font-heading text-2xl">{copy.historyTitle}</h2>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
+        <div className="mt-4 max-w-full overflow-x-auto">
+          <table className="min-w-[720px] w-full border-collapse text-sm">
             <thead className="bg-wiki-page">
               <tr>
                 <th className="border border-wiki-border px-3 py-2 text-left">
@@ -119,7 +123,7 @@ export function CountryScorecard({
             <tbody>
               {orderedScores.map((score) => (
                 <tr key={describeScoreSnapshot(score, eras)}>
-                  <td className="border border-wiki-border px-3 py-2 text-wiki-muted">
+                  <td className="border border-wiki-border px-3 py-2 text-wiki-muted break-words">
                     {renderScoreReference(score, eras, hitoArticles)}
                   </td>
                   {countryScoreMetrics.map((metric) => {
@@ -127,7 +131,10 @@ export function CountryScorecard({
                     const trend = getCountryScoreTrend(score, metric.trendKey);
 
                     return (
-                      <td key={`${describeScoreSnapshot(score, eras)}-${metric.valueKey}`} className="border border-wiki-border px-3 py-2">
+                      <td
+                        key={`${describeScoreSnapshot(score, eras)}-${metric.valueKey}`}
+                        className="border border-wiki-border px-3 py-2"
+                      >
                         <span className="font-semibold">{value ?? "?"}</span>{" "}
                         <span className="text-wiki-muted">{getTrendSymbol(trend)}</span>
                       </td>
@@ -145,9 +152,9 @@ export function CountryScorecard({
 
 function StatCard({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-sm border border-wiki-border bg-wiki-page px-3 py-2">
+    <div className="min-w-0 rounded-sm border border-wiki-border bg-wiki-page px-3 py-2">
       <div className="text-xs uppercase tracking-[0.12em] text-wiki-muted">{label}</div>
-      <div className="mt-1 font-heading text-xl">{value}</div>
+      <div className="mt-1 min-w-0 break-words font-heading text-xl">{value}</div>
     </div>
   );
 }
@@ -167,12 +174,24 @@ function renderScoreReference(
 
   return (
     <>
-      {eraLabel} ·{" "}
-      <HitoReference
-        hitoId={score.hitoId}
-        hitoArticles={hitoArticles}
-        missingClassName="text-wiki-muted"
-      />
+      <span className="hidden md:inline">
+        {eraLabel} ·{" "}
+        <HitoReference
+          hitoId={score.hitoId}
+          hitoArticles={hitoArticles}
+          missingClassName="text-wiki-muted"
+        />
+      </span>
+      <span className="md:hidden">
+        <span className="block">{eraLabel}</span>
+        <span className="block">
+          <HitoReference
+            hitoId={score.hitoId}
+            hitoArticles={hitoArticles}
+            missingClassName="text-wiki-muted"
+          />
+        </span>
+      </span>
     </>
   );
 }
@@ -194,8 +213,8 @@ function CountryRadarChart({ score }: { score: CountryScore }) {
     .join(" ");
 
   return (
-    <div className="rounded-sm border border-wiki-border bg-wiki-page p-3">
-      <svg viewBox={`0 0 ${size} ${size}`} className="h-auto w-full">
+    <div className="max-w-full overflow-hidden rounded-sm border border-wiki-border bg-wiki-page p-3">
+      <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto h-auto w-full max-w-[320px]">
         {rings.map((ring) => {
           const ringPoints = countryScoreMetrics
             .map((_, index) => {

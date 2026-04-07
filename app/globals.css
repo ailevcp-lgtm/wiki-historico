@@ -39,6 +39,11 @@ a {
     @apply transition-colors hover:underline;
   }
 
+  .wiki-news-link {
+    @apply underline;
+    text-underline-offset: 2px;
+  }
+
   .wiki-link-track:hover {
     color: #0645ad;
   }

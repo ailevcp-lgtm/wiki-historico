@@ -1285,29 +1285,25 @@ function normalizeTrend(value?: string): "up" | "down" | "stable" | undefined {
 
 function normalizeBloc(value?: string, countrySlug?: string): string | undefined {
   if (!value) {
-    return countrySlug === "aether" ? "tecnopolis" : undefined;
+    return countrySlug === "aether" ? "tecnologicos" : undefined;
   }
 
   const normalized = normalizeForSearch(normalizeCapturedLine(value));
 
   if (!normalized || normalized === "otro") {
-    return countrySlug === "aether" ? "tecnopolis" : undefined;
+    return countrySlug === "aether" ? "tecnologicos" : undefined;
   }
 
   if (/tecnopolis|tecnocr|(^|\W)tec($|\W)|aether/.test(normalized)) {
-    return "tecnopolis";
+    return "tecnologicos";
   }
 
   if (/confederacion|relig|ummah/.test(normalized)) {
-    return "confederacion";
+    return "religiosos";
   }
 
   if (/mixto|agro/.test(normalized)) {
-    return "agro-energetico";
-  }
-
-  if (/narco|vulner/.test(normalized)) {
-    return "vulnerables";
+    return "mixto";
   }
 
   return slugify(normalizeCapturedLine(value));

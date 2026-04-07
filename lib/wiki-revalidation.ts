@@ -3,8 +3,8 @@ import { revalidatePath } from "next/cache";
 import { getNavigationData } from "@/lib/repository";
 import type { Article, Country } from "@/types/wiki";
 
-type ArticlePathTarget = Pick<Article, "slug" | "categorySlugs" | "eraSlug">;
-type CountryPathTarget = Pick<Country, "slug">;
+type ArticlePathTarget = Pick<Article, "slug" | "categorySlugs" | "eraSlug" | "blocSlugs">;
+type CountryPathTarget = Pick<Country, "slug" | "bloc">;
 
 export async function revalidateArticlePaths(target: ArticlePathTarget | ArticlePathTarget[]) {
   const targets = Array.isArray(target) ? target : [target];
@@ -17,6 +17,10 @@ export async function revalidateArticlePaths(target: ArticlePathTarget | Article
 
     if (article.eraSlug) {
       revalidatePath(`/era/${article.eraSlug}`);
+    }
+
+    for (const blocSlug of article.blocSlugs ?? []) {
+      revalidatePath(`/bloc/${blocSlug}`);
     }
 
     for (const categorySlug of article.categorySlugs) {
@@ -36,6 +40,10 @@ export async function revalidateCountryPaths(target: CountryPathTarget | Country
   for (const country of targets) {
     revalidatePath(`/admin/countries/${country.slug}`);
     revalidatePath(`/country/${country.slug}`);
+
+    if (country.bloc) {
+      revalidatePath(`/bloc/${country.bloc}`);
+    }
   }
 }
 

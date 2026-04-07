@@ -1,10 +1,9 @@
-import Image from "next/image";
-
 import { infoboxLabel } from "@/lib/markdown";
 import { humanizeSlug } from "@/lib/utils";
 import type { InfoboxData } from "@/types/wiki";
 
 import { WikiLink } from "./wiki-link";
+import { ZoomableImage } from "./zoomable-image";
 
 interface InfoboxProps {
   articleTitles: Record<string, string>;
@@ -24,11 +23,9 @@ export function Infobox({ articleTitles, data, imageUrl, title }: InfoboxProps) 
     <aside className="wiki-infobox">
       {imageUrl ? (
         <div className="border-b border-wiki-border bg-white p-2">
-          <Image
+          <ZoomableImage
             src={imageUrl}
             alt={title}
-            width={320}
-            height={190}
             className="h-auto w-full rounded-sm border border-wiki-border object-cover"
           />
         </div>

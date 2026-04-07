@@ -5,11 +5,11 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
   shell: {
     siteTitle: "Histórico 2100",
     siteTagline: "Wiki del escenario",
-    searchPlaceholder: "Buscar artículos, eras o tratados",
+    searchPlaceholder: "Buscar artículos ",
     searchButtonLabel: "Buscar",
     navigationSectionTitle: "Navegación",
     homeLabel: "Portada",
-    timelineLabel: "Timeline",
+    timelineLabel: "Línea del tiempo",
     searchLabel: "Búsqueda",
     countriesLabel: "Países",
     erasSectionTitle: "Eras",
@@ -22,34 +22,18 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     heroTitle: "Histórico 2026-2100",
     heroDescription:
       "Una wiki ficticia para seguir la evolución del mundo desde la crisis inicial hasta la cumbre que discute quién tiene derecho al futuro.",
-    timelineSectionTitle: "Cronología base",
-    timelineSectionLinkLabel: "Ver timeline completo",
-    featuredBadgeLabel: "Artículo destacado",
-    featuredPendingTypeLabel: "Pendiente de publicación",
-    featuredEmptyTitle: "Portada en preparación",
-    featuredEmptyDescription:
-      "Todavía no hay artículos históricos publicados. La portada se va a llenar con el contenido real a medida que se revise y promueva desde admin.",
-    featuredReadMoreLabel: "Abrir artículo completo",
-    latestSectionTitle: "Últimos publicados",
-    latestSectionLinkLabel: "Explorar todo",
-    latestEmptyMessage:
-      "Aún no hay publicaciones reales en portada. El listado aparecerá cuando empecemos a promover hitos desde la cola editorial.",
+    timelineSectionTitle: "Línea del tiempo base",
+    timelineSectionLinkLabel: "Ver línea del tiempo completa",
     blocsSectionTitle: "Acceso por bloques",
     blocsSectionKicker: "Mapa político resumido",
     directorySectionTitle: "Directorio de países",
     directorySectionDescription:
       "Abrí la lista completa de países y regiones para ver su presencia en AG, CDH y CSyM y navegar directo a cada ficha.",
-    directorySectionButtonLabel: "Ver países",
-    statsSectionTitle: "Estadísticas del archivo",
-    statsSectionKicker: "Estado actual de la wiki",
-    statsPublishedArticlesLabel: "Artículos publicados",
-    statsCountriesLabel: "Países y regiones",
-    statsCategoriesLabel: "Categorías",
-    statsErasLabel: "Eras activas"
+    directorySectionButtonLabel: "Ver países"
   },
   timeline: {
     eyebrow: "Vista global",
-    title: "Timeline del escenario",
+    title: "Línea del tiempo del escenario",
     description:
       "Recorrido cronológico de los hitos principales del universo ficticio desde 2026 hasta 2100.",
     allErasLabel: "Todas las eras",
@@ -75,7 +59,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
       "Esta matriz resume qué países y regiones aparecen en cada órgano del escenario. Cada fila abre la ficha individual del país para seguir su información detallada.",
     organCountDescription: "Países con presencia en este órgano.",
     matrixTitle: "Matriz de presencia institucional",
-    matrixKicker: "Orden base tomado del archivo CSV"
+    matrixKicker: ""
   },
   countryPage: {
     badgeLabel: "Ficha país",
@@ -133,4 +117,3 @@ export const defaultWikiSiteConfig: WikiSiteConfig = {
   blocs,
   copy: defaultPublicWikiCopy
 };
-

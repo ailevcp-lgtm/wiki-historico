@@ -1,9 +1,9 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ArticleMarkdown } from "@/components/article-markdown";
 import { JsonLd } from "@/components/json-ld";
+import { ZoomableImage } from "@/components/zoomable-image";
 import { CountryOrganSummary } from "@/components/country-presence-board";
 import { CountryScorecard } from "@/components/country-scorecard";
 import { getCountryProfileMarkdown } from "@/lib/country-profile";
@@ -15,7 +15,6 @@ import {
   getNavigationData,
   getPublicWikiCopy
 } from "@/lib/repository";
-import { applyCopyTemplate } from "@/lib/site-config/utils";
 import {
   buildBreadcrumbJsonLd,
   buildCountryJsonLd,
@@ -110,22 +109,17 @@ export default async function CountryPage({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0 overflow-x-hidden">
       <JsonLd data={seoJsonLd} />
-      <section className="wiki-paper p-5 md:p-6">
+      <section className="wiki-paper min-w-0 overflow-hidden p-5 md:p-6">
         <header className="border-b border-wiki-border pb-5">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-wrap gap-2">
             <span className="wiki-badge">{copy.countryPage.badgeLabel}</span>
             {country.bloc ? <span className="wiki-badge">{humanizeSlug(country.bloc)}</span> : null}
             <CountryOrganSummary
               country={country}
               emptyLabel={copy.countryPage.noOrgansBadgeLabel}
             />
-            <span className="wiki-badge">
-              {applyCopyTemplate(copy.countryPage.snapshotBadgeTemplate, {
-                count: country.scores.length
-              })}
-            </span>
           </div>
           <h1 className="wiki-page-title mt-4">{country.name}</h1>
           <p className="mt-3 max-w-3xl text-lg leading-8 text-wiki-muted">
@@ -133,16 +127,14 @@ export default async function CountryPage({
           </p>
         </header>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-6 min-w-0 space-y-6">
           {country.flagUrl ? (
-            <section className="wiki-paper p-4">
+            <section className="wiki-paper min-w-0 overflow-hidden p-4">
               <h2 className="font-heading text-2xl">Representante</h2>
               <div className="mt-4 mx-auto max-w-sm overflow-hidden rounded-sm border border-wiki-border bg-white">
-                <Image
+                <ZoomableImage
                   src={country.flagUrl}
                   alt={`Foto del representante de ${country.name}`}
-                  width={640}
-                  height={800}
                   className="h-auto w-full object-contain"
                 />
               </div>
@@ -150,23 +142,21 @@ export default async function CountryPage({
           ) : null}
 
           {country.mapUrl ? (
-            <section className="wiki-paper p-4">
+            <section className="wiki-paper min-w-0 overflow-hidden p-4">
               <h2 className="font-heading text-2xl">{copy.countryPage.mapSectionTitle}</h2>
-              <div className="mt-4 overflow-hidden rounded-sm border border-wiki-border bg-white">
-                <Image
+              <div className="mt-4 max-w-full overflow-hidden rounded-sm border border-wiki-border bg-white">
+                <ZoomableImage
                   src={country.mapUrl}
                   alt={`Mapa de ${country.name}`}
-                  width={960}
-                  height={720}
                   className="h-auto w-full object-contain"
                 />
               </div>
             </section>
           ) : null}
 
-          <section className="wiki-paper p-5">
+          <section className="wiki-paper min-w-0 overflow-hidden p-5">
             <h2 className="font-heading text-2xl">{copy.countryPage.profileSectionTitle}</h2>
-            <div className="mt-4">
+            <div className="mt-4 min-w-0 overflow-hidden break-words [&_a]:break-words [&_h1]:break-words [&_h2]:break-words [&_h3]:break-words [&_li]:break-words [&_p]:break-words">
               <ArticleMarkdown
                 articleTitles={articleTitles}
                 hitoArticles={hitoArticles}
@@ -181,6 +171,7 @@ export default async function CountryPage({
             copy={copy.countryScorecard}
             eras={navigation.eras}
             hitoArticles={hitoArticles}
+            showSnapshotsStat={false}
           />
         </div>
       </section>

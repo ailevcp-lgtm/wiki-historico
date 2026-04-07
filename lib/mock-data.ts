@@ -1,4 +1,5 @@
 import type { Article, Bloc, Category, Country, TimelineEra } from "@/types/wiki";
+import { publicBlocDefinitions } from "@/lib/bloc-profiles";
 
 export const eras: TimelineEra[] = [
   {
@@ -80,32 +81,7 @@ export const categories: Category[] = [
   }
 ];
 
-export const blocs: Bloc[] = [
-  {
-    slug: "tecnopolis",
-    name: "Tecnópolis",
-    summary: "Bloque de alta capacidad técnica y gestión algorítmica.",
-    color: "#DCEBFA"
-  },
-  {
-    slug: "confederacion",
-    name: "Confederación",
-    summary: "Red político-cultural centrada en legitimidad compartida y coordinación flexible.",
-    color: "#E7EBD6"
-  },
-  {
-    slug: "agro-energetico",
-    name: "Agro-Energético",
-    summary: "Actores que concentran recursos, alimento, agua y energías estratégicas.",
-    color: "#F6E7D7"
-  },
-  {
-    slug: "vulnerables",
-    name: "Vulnerables",
-    summary: "Países altamente expuestos a shocks climáticos y dependencia externa.",
-    color: "#F5DDE5"
-  }
-];
+export const blocs: Bloc[] = publicBlocDefinitions.map(({ longDescription: _longDescription, characteristics: _characteristics, ...bloc }) => bloc);
 
 export const articles: Article[] = [
   {

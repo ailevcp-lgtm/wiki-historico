@@ -27,6 +27,7 @@ type ArticleRow = {
   summary: string | null;
   infobox: Article["infobox"] | null;
   category_slugs: string[] | null;
+  bloc_slugs: string[] | null;
   related_slugs: string[] | null;
   era_slug: string | null;
   hito_id: string | null;
@@ -314,6 +315,7 @@ async function persistArticle(article: Article): Promise<void> {
         summary: article.summary,
         infobox: article.infobox ?? null,
         category_slugs: article.categorySlugs,
+        bloc_slugs: article.blocSlugs ?? [],
         related_slugs: article.relatedSlugs,
         era_slug: article.eraSlug ?? null,
         hito_id: article.hitoId ?? null,
@@ -479,6 +481,7 @@ function mapArticleRow(row: ArticleRow): Article {
     summary: row.summary ?? "",
     infobox: row.infobox ?? undefined,
     categorySlugs: row.category_slugs ?? [],
+    blocSlugs: row.bloc_slugs ?? [],
     relatedSlugs: row.related_slugs ?? [],
     eraSlug: row.era_slug ?? undefined,
     hitoId: row.hito_id ?? undefined,

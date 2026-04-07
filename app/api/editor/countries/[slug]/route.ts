@@ -33,7 +33,7 @@ export async function PUT(
 
   try {
     const saved = await saveCountry(parsed.value);
-    revalidateCountryPaths(saved.slug);
+    revalidateCountryPaths(saved.slug, saved.bloc);
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json(
@@ -46,10 +46,14 @@ export async function PUT(
   }
 }
 
-function revalidateCountryPaths(slug: string) {
+function revalidateCountryPaths(slug: string, bloc?: string) {
   revalidatePath("/");
   revalidatePath("/countries");
   revalidatePath("/admin/countries");
   revalidatePath(`/admin/countries/${slug}`);
   revalidatePath(`/country/${slug}`);
+
+  if (bloc) {
+    revalidatePath(`/bloc/${bloc}`);
+  }
 }

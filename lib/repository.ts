@@ -1,5 +1,6 @@
 import "server-only";
 
+import { inferBlocFromCountry, publicBlocDefinitions } from "@/lib/bloc-profiles";
 import { getSeedCountries, getSeedCountryOrder } from "@/lib/country-directory";
 import { listPersistedArticles, listPersistedCountries } from "@/lib/content/store";
 import { normalizeHitoId } from "@/lib/hito-references";
@@ -8,12 +9,14 @@ import { normalizeForSearch, stripMarkdown, truncate } from "@/lib/utils";
 import type { Article, Country, HitoReferenceTarget, PublicWikiCopy } from "@/types/wiki";
 
 export async function getNavigationData() {
-  const { blocs, categories, eras } = await getSiteConfig();
+  const { categories, eras } = await getSiteConfig();
 
   return {
     eras,
     categories,
-    blocs
+    blocs: publicBlocDefinitions.map(
+      ({ longDescription: _longDescription, characteristics: _characteristics, ...bloc }) => bloc
+    )
   };
 }
 
@@ -27,6 +30,10 @@ export async function getEraBySlug(slug: string) {
 
 export async function getCategoryBySlug(slug: string) {
   return (await getNavigationData()).categories.find((category) => category.slug === slug);
+}
+
+export async function getBlocBySlug(slug: string) {
+  return (await getNavigationData()).blocs.find((bloc) => bloc.slug === slug);
 }
 
 export async function getArticleIndex(options?: { includeDrafts?: boolean }) {
@@ -99,8 +106,43 @@ export async function getEditableArticleBySlug(slug: string): Promise<Article | 
 }
 
 export async function getArticlesByEra(slug: string): Promise<Article[]> {
-  return (await getPublishedArticles())
-    .filter((article) => article.eraSlug === slug)
+  const published = await getPublishedArticles();
+  const directMatches = published.filter((article) => article.eraSlug === slug);
+
+  if (slug === "era-1") {
+    const maxEraOneHitoOrder = directMatches.reduce((maxValue, article) => {
+      const order = getHitoOrder(article.hitoId);
+      return Number.isFinite(order) ? Math.max(maxValue, order) : maxValue;
+    }, 0);
+    const preEraMatches = published.filter((article) => {
+      if (article.eraSlug === slug) {
+        return false;
+      }
+
+      const hitoOrder = getHitoOrder(article.hitoId);
+      return Number.isFinite(hitoOrder) && hitoOrder > 0 && hitoOrder <= maxEraOneHitoOrder;
+    });
+    const uniqueArticles = new Map<string, Article>();
+
+    for (const article of [...directMatches, ...preEraMatches]) {
+      uniqueArticles.set(article.slug, article);
+    }
+
+    return [...uniqueArticles.values()].sort(sortArticlesByChronology);
+  }
+
+  return directMatches.sort(sortArticlesByChronology);
+}
+
+export async function getArticlesByCategory(slug: string): Promise<Article[]> {
+  return [...(await getPublishedArticles())]
+    .filter((article) => article.categorySlugs.includes(slug))
+    .sort((left, right) => left.title.localeCompare(right.title, "es"));
+}
+
+export async function getArticlesByBloc(slug: string): Promise<Article[]> {
+  return [...(await getPublishedArticles())]
+    .filter((article) => articleBelongsToBloc(article, slug))
     .sort((left, right) => {
       const leftHitoOrder = getHitoOrder(left.hitoId);
       const rightHitoOrder = getHitoOrder(right.hitoId);
@@ -115,12 +157,6 @@ export async function getArticlesByEra(slug: string): Promise<Article[]> {
 
       return left.title.localeCompare(right.title, "es");
     });
-}
-
-export async function getArticlesByCategory(slug: string): Promise<Article[]> {
-  return [...(await getPublishedArticles())]
-    .filter((article) => article.categorySlugs.includes(slug))
-    .sort((left, right) => left.title.localeCompare(right.title, "es"));
 }
 
 export async function getCountryBySlug(slug: string): Promise<Country | undefined> {
@@ -164,6 +200,10 @@ export async function getCountryDirectory(): Promise<Country[]> {
 
     return left.name.localeCompare(right.name, "es");
   });
+}
+
+export async function getCountriesByBloc(slug: string): Promise<Country[]> {
+  return (await getCountryDirectory()).filter((country) => country.bloc === slug);
 }
 
 export async function searchArticles(query: string): Promise<Array<{ article: Article; excerpt: string }>> {
@@ -218,13 +258,21 @@ function mergeBySlug<T extends { slug: string }>(baseItems: T[], overrideItems: 
 
 function applySeedCountryFallback(country: Country, seedCountry?: Country): Country {
   if (!seedCountry) {
-    return country;
+    return {
+      ...country,
+      bloc: inferBlocFromCountry(country)
+    };
   }
 
-  return {
+  const merged = {
     ...seedCountry,
     ...country,
     organMemberships: country.organMemberships ?? seedCountry.organMemberships
+  };
+
+  return {
+    ...merged,
+    bloc: inferBlocFromCountry(merged)
   };
 }
 
@@ -236,4 +284,47 @@ function getHitoOrder(hitoId?: string) {
   }
 
   return Number(match[1]);
+}
+
+function sortArticlesByChronology(left: Article, right: Article) {
+  const leftHitoOrder = getHitoOrder(left.hitoId);
+  const rightHitoOrder = getHitoOrder(right.hitoId);
+
+  if (leftHitoOrder !== rightHitoOrder) {
+    return leftHitoOrder - rightHitoOrder;
+  }
+
+  if ((left.yearStart ?? 0) !== (right.yearStart ?? 0)) {
+    return (left.yearStart ?? 0) - (right.yearStart ?? 0);
+  }
+
+  return left.title.localeCompare(right.title, "es");
+}
+
+function articleBelongsToBloc(article: Article, blocSlug: string) {
+  if (article.blocSlugs?.includes(blocSlug)) {
+    return true;
+  }
+
+  if (article.slug === blocSlug) {
+    return true;
+  }
+
+  if (article.relatedSlugs.includes(blocSlug)) {
+    return true;
+  }
+
+  const infoboxBlocValue = article.infobox?.bloc;
+
+  if (typeof infoboxBlocValue === "string") {
+    const normalizedValue = infoboxBlocValue
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-");
+    return normalizedValue === blocSlug;
+  }
+
+  return false;
 }

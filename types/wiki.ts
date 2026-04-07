@@ -58,25 +58,11 @@ export interface HomePageCopy {
   heroDescription: string;
   timelineSectionTitle: string;
   timelineSectionLinkLabel: string;
-  featuredBadgeLabel: string;
-  featuredPendingTypeLabel: string;
-  featuredEmptyTitle: string;
-  featuredEmptyDescription: string;
-  featuredReadMoreLabel: string;
-  latestSectionTitle: string;
-  latestSectionLinkLabel: string;
-  latestEmptyMessage: string;
   blocsSectionTitle: string;
   blocsSectionKicker: string;
   directorySectionTitle: string;
   directorySectionDescription: string;
   directorySectionButtonLabel: string;
-  statsSectionTitle: string;
-  statsSectionKicker: string;
-  statsPublishedArticlesLabel: string;
-  statsCountriesLabel: string;
-  statsCategoriesLabel: string;
-  statsErasLabel: string;
 }
 
 export interface TimelinePageCopy {

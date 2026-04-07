@@ -12,6 +12,7 @@ import { slugify } from "@/lib/utils";
 
 import { HitoReference } from "./hito-reference";
 import { WikiLink } from "./wiki-link";
+import { ZoomableImage } from "./zoomable-image";
 
 interface ArticleMarkdownProps {
   hitoArticles: HitoReferenceIndex;
@@ -94,6 +95,19 @@ export function ArticleMarkdown({
               <a href={href} target="_blank" rel="noreferrer" className="wiki-link">
                 {children}
               </a>
+            );
+          },
+          img: ({ src, alt = "" }) => {
+            if (!src || typeof src !== "string") {
+              return null;
+            }
+
+            return (
+              <ZoomableImage
+                src={src}
+                alt={alt}
+                className="h-auto max-w-full rounded-sm border border-wiki-border"
+              />
             );
           }
         }}

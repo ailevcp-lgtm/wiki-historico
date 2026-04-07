@@ -4,9 +4,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { cache } from "react";
 
-import { countryOrganDefinitions } from "@/lib/country-organs";
 import { slugify } from "@/lib/utils";
-import type { Country, CountryOrganSlug } from "@/types/wiki";
+import type { Country } from "@/types/wiki";
 
 const csvFilePath = path.join(process.cwd(), "CSV", "Lista paises historico 2026 - Completa.csv");
 
@@ -44,21 +43,14 @@ const fallbackCountryNames = [
   "Polonia"
 ] as const;
 
-const organPresets: CountryOrganSlug[][] = [
-  ["ag", "cdh", "csym"],
-  ["ag", "cdh"],
-  ["ag"]
-];
-
 export const getSeedCountries = cache(async (): Promise<Country[]> => {
   const countryNames = await readCountryNamesFromCsv();
 
-  return countryNames.map((name, index) => ({
+  return countryNames.map((name) => ({
     slug: slugify(name),
     name,
-    summary: buildSeedSummary(name, index),
+    summary: buildSeedSummary(name),
     profileMarkdown: buildSeedProfile(name),
-    organMemberships: getPresetByIndex(index),
     scores: []
   }));
 });
@@ -68,28 +60,12 @@ export const getSeedCountryOrder = cache(async () => {
   return new Map(countries.map((country, index) => [country.slug, index] as const));
 });
 
-function buildSeedSummary(name: string, index: number) {
-  const labels = getPresetByIndex(index)
-    .map((slug) => countryOrganDefinitions.find((organ) => organ.slug === slug)?.label ?? slug.toUpperCase())
-    .join(", ");
-
-  return `${name} figura en la matriz base de países del escenario con presencia en ${labels}.`;
+function buildSeedSummary(name: string) {
+  return `${name} figura en la matriz base de países del escenario y espera desarrollo editorial completo.`;
 }
 
 function buildSeedProfile(name: string) {
-  return `## Ficha base\n\n${name} fue incorporado desde la matriz inicial de países por órgano.\n\n## Pendiente editorial\n\nCompletar aquí el perfil narrativo, antecedentes y posición estratégica desde el panel admin.`;
-}
-
-function getPresetByIndex(index: number): CountryOrganSlug[] {
-  if (index <= 14) {
-    return organPresets[0];
-  }
-
-  if (index <= 24) {
-    return organPresets[1];
-  }
-
-  return organPresets[2];
+  return `## Ficha base\n\n${name} fue incorporado desde la matriz inicial de países.\n\n## Pendiente editorial\n\nCompletar aquí el perfil narrativo, antecedentes y posición estratégica desde el panel admin.`;
 }
 
 async function readCountryNamesFromCsv() {

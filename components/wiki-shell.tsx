@@ -1,135 +1,160 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import type { Bloc, Category, TimelineEra, WikiShellCopy } from "@/types/wiki";
+import { WikiFooter } from "@/components/wiki-footer";
+import { ReadingProgressBar, ReadingProgressProvider } from "@/components/reading-progress";
+import type { Bloc, TimelineEra, WikiShellCopy } from "@/types/wiki";
 
 interface WikiShellProps {
   blocs: Bloc[];
-  categories: Category[];
   copy: WikiShellCopy;
   eras: TimelineEra[];
+  readingProgressSlugs: string[];
   children: ReactNode;
 }
 
-export function WikiShell({ blocs, categories, copy, eras, children }: WikiShellProps) {
+export function WikiShell({
+  blocs,
+  copy,
+  eras,
+  readingProgressSlugs,
+  children
+}: WikiShellProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(96);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const selectedBloc = searchParams.get("bloc");
+
+  useEffect(() => {
+    const header = headerRef.current;
+
+    if (!header) {
+      return;
+    }
+
+    const updateHeight = () => {
+      setHeaderHeight(header.getBoundingClientRect().height);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateHeight);
+      return () => window.removeEventListener("resize", updateHeight);
+    }
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(header);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-wiki-page text-wiki-text">
-      <header className="sticky top-0 z-40 border-b border-wiki-border bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-3 lg:px-6">
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded border border-wiki-border bg-wiki-page text-xl lg:hidden"
-            onClick={() => setIsOpen((current) => !current)}
-            aria-label="Abrir navegación"
-          >
-            ≡
-          </button>
-
-          <Link href="/" className="min-w-0">
-            <div className="font-heading text-xl leading-none text-wiki-text">{copy.siteTitle}</div>
-            <div className="text-xs uppercase tracking-[0.18em] text-wiki-muted">{copy.siteTagline}</div>
-          </Link>
-
-          <form action="/search" className="ml-auto flex w-full max-w-md items-center gap-2">
-            <input
-              type="search"
-              name="q"
-              placeholder={copy.searchPlaceholder}
-              className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2 text-sm outline-none ring-0 placeholder:text-wiki-muted focus:border-wiki-blue"
-            />
-            <button
-              type="submit"
-              className="rounded-sm border border-wiki-border bg-wiki-page px-3 py-2 text-sm font-semibold"
-            >
-              {copy.searchButtonLabel}
-            </button>
-          </form>
-        </div>
-      </header>
-
-      <div className="mx-auto flex max-w-[1440px]">
-        <div
-          className={`fixed inset-0 z-30 bg-black/35 transition-opacity lg:hidden ${
-            isOpen ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
-          onClick={() => setIsOpen(false)}
-        />
-
-        <aside
-          className={`wiki-sidebar fixed left-0 top-[65px] z-40 h-[calc(100vh-65px)] w-[280px] overflow-y-auto border-r border-wiki-border bg-wiki-page p-4 transition-transform lg:sticky lg:top-[65px] lg:block lg:h-[calc(100vh-65px)] lg:w-[240px] lg:translate-x-0 ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+    <ReadingProgressProvider eligibleSlugs={readingProgressSlugs}>
+      <div className="min-h-screen bg-wiki-page text-wiki-text">
+        <header
+          ref={headerRef}
+          className="sticky top-0 z-40 border-b border-wiki-border bg-white/95 backdrop-blur"
         >
-          <NavSection title={copy.navigationSectionTitle}>
-            <NavItem href="/" active={pathname === "/"} onNavigate={() => setIsOpen(false)}>
-              {copy.homeLabel}
-            </NavItem>
-            <NavItem
-              href="/timeline"
-              active={pathname === "/timeline"}
-              onNavigate={() => setIsOpen(false)}
-            >
-              {copy.timelineLabel}
-            </NavItem>
-            <NavItem href="/search" active={pathname === "/search"} onNavigate={() => setIsOpen(false)}>
-              {copy.searchLabel}
-            </NavItem>
-            <NavItem
-              href="/countries"
-              active={pathname === "/countries"}
-              onNavigate={() => setIsOpen(false)}
-            >
-              {copy.countriesLabel}
-            </NavItem>
-          </NavSection>
-
-          <NavSection title={copy.erasSectionTitle}>
-            {eras.map((era) => (
-              <NavItem
-                key={era.slug}
-                href={`/era/${era.slug}`}
-                active={pathname === `/era/${era.slug}`}
-                onNavigate={() => setIsOpen(false)}
+          <div className="mx-auto max-w-[1440px] px-4 lg:px-6">
+            <div className="flex items-center gap-3 py-3">
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 items-center justify-center rounded border border-wiki-border bg-wiki-page text-xl lg:hidden"
+                onClick={() => setIsOpen((current) => !current)}
+                aria-label="Abrir navegación"
               >
-                {copy.eraLabelPrefix} {era.number} ({era.yearStart}-{era.yearEnd})
-              </NavItem>
-            ))}
-          </NavSection>
+                ≡
+              </button>
 
-          <NavSection title={copy.categoriesSectionTitle}>
-            {categories.map((category) => (
-              <NavItem
-                key={category.slug}
-                href={`/category/${category.slug}`}
-                active={pathname === `/category/${category.slug}`}
-                onNavigate={() => setIsOpen(false)}
-              >
-                {category.name}
-              </NavItem>
-            ))}
-          </NavSection>
+              <Link href="/" className="flex min-w-0 items-center gap-2">
+                <Image
+                  src="/images/logoHistorico.png"
+                  alt="Histórico 2100"
+                  width={56}
+                  height={56}
+                  className="h-14 w-14 object-contain"
+                  priority
+                />
+                <div className="min-w-0">
+                  <div className="truncate font-heading text-xl leading-none text-wiki-text">
+                    {copy.siteTitle}
+                  </div>
+                  <div className="truncate text-xs uppercase tracking-[0.18em] text-wiki-muted">
+                    {copy.siteTagline}
+                  </div>
+                </div>
+              </Link>
+            </div>
 
-          <NavSection title={copy.blocsSectionTitle}>
-            {blocs.map((bloc) => (
-              <div key={bloc.slug} className="rounded-sm border border-wiki-border bg-white px-3 py-2 text-sm">
-                <div className="font-semibold text-wiki-text">{bloc.name}</div>
-                <p className="mt-1 text-xs text-wiki-muted">{bloc.summary}</p>
-              </div>
-            ))}
-          </NavSection>
-        </aside>
+            <div className="border-t border-wiki-border py-3">
+              <ReadingProgressBar />
+            </div>
+          </div>
+        </header>
 
-        <main className="min-h-[calc(100vh-65px)] flex-1 px-0 lg:px-6">
-          <div className="mx-auto max-w-[1040px] px-4 py-6 lg:px-0">{children}</div>
-        </main>
+        <div className="mx-auto flex max-w-[1440px]">
+          <div
+            className={`fixed inset-x-0 bottom-0 z-30 bg-black/35 transition-opacity lg:hidden ${
+              isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            style={{ top: headerHeight }}
+            onClick={() => setIsOpen(false)}
+          />
+
+          <aside
+            className={`wiki-sidebar fixed left-0 z-40 w-[280px] overflow-y-auto border-r border-wiki-border bg-wiki-page p-4 transition-transform lg:sticky lg:w-[240px] lg:translate-x-0 ${
+              isOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+            style={{
+              top: headerHeight,
+              height: `calc(100vh - ${headerHeight}px)`
+            }}
+          >
+            <NavSection title={copy.erasSectionTitle}>
+              {eras.map((era) => (
+                <NavItem
+                  key={era.slug}
+                  href={`/era/${era.slug}`}
+                  active={pathname === `/era/${era.slug}`}
+                  onNavigate={() => setIsOpen(false)}
+                >
+                  {copy.eraLabelPrefix} {era.number} ({era.yearStart}-{era.yearEnd})
+                </NavItem>
+              ))}
+            </NavSection>
+
+            <NavSection title={copy.blocsSectionTitle}>
+              {blocs.map((bloc) => (
+                <NavItem
+                  key={bloc.slug}
+                  href={`/bloc/${bloc.slug}`}
+                  active={pathname === `/bloc/${bloc.slug}` || (pathname === "/countries" && selectedBloc === bloc.slug)}
+                  onNavigate={() => setIsOpen(false)}
+                >
+                  {bloc.name}
+                </NavItem>
+              ))}
+            </NavSection>
+          </aside>
+
+          <main className="min-w-0 flex-1 px-0 lg:px-6" style={{ minHeight: `calc(100vh - ${headerHeight}px)` }}>
+            <div className="mx-auto min-w-0 max-w-[1040px] px-4 py-6 lg:px-0">{children}</div>
+          </main>
+        </div>
+        <WikiFooter />
       </div>
-    </div>
+    </ReadingProgressProvider>
   );
 }
 

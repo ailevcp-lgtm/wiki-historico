@@ -34,25 +34,11 @@ const homeFields: CopyField[] = [
   { key: "heroDescription", label: "Descripción portada", multiline: true, rows: 3 },
   { key: "timelineSectionTitle", label: "Título bloque cronología" },
   { key: "timelineSectionLinkLabel", label: "Link timeline completo" },
-  { key: "featuredBadgeLabel", label: "Badge destacado" },
-  { key: "featuredPendingTypeLabel", label: "Estado destacado vacío" },
-  { key: "featuredEmptyTitle", label: "Título sin destacado" },
-  { key: "featuredEmptyDescription", label: "Descripción sin destacado", multiline: true, rows: 3 },
-  { key: "featuredReadMoreLabel", label: "CTA destacado" },
-  { key: "latestSectionTitle", label: "Título últimos publicados" },
-  { key: "latestSectionLinkLabel", label: "Link explorar todo" },
-  { key: "latestEmptyMessage", label: "Mensaje sin últimos", multiline: true, rows: 3 },
   { key: "blocsSectionTitle", label: "Título bloques" },
   { key: "blocsSectionKicker", label: "Kicker bloques" },
   { key: "directorySectionTitle", label: "Título directorio países" },
   { key: "directorySectionDescription", label: "Descripción directorio países", multiline: true, rows: 3 },
-  { key: "directorySectionButtonLabel", label: "Botón directorio países" },
-  { key: "statsSectionTitle", label: "Título estadísticas" },
-  { key: "statsSectionKicker", label: "Kicker estadísticas" },
-  { key: "statsPublishedArticlesLabel", label: "Label artículos publicados" },
-  { key: "statsCountriesLabel", label: "Label países" },
-  { key: "statsCategoriesLabel", label: "Label categorías" },
-  { key: "statsErasLabel", label: "Label eras" }
+  { key: "directorySectionButtonLabel", label: "Botón directorio países" }
 ];
 
 const timelineFields: CopyField[] = [
@@ -432,7 +418,7 @@ export function SiteConfigEditor({ initialConfig }: SiteConfigEditorProps) {
       />
       <CopySection
         title="Portada"
-        description="Todos los títulos, CTA y mensajes visibles de la home."
+        description="Textos visibles del hero, cronología, bloques y directorio."
         fields={homeFields}
         sectionKey="home"
         state={config.copy}
