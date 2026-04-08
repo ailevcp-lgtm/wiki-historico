@@ -65,7 +65,6 @@ export async function generateMetadata({
     title,
     description,
     path: canonicalPath,
-    imagePath: `${canonicalPath}/opengraph-image`,
     imageAlt: `${article.title} en Histórico 2100`,
     keywords,
     type: "article"

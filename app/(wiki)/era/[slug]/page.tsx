@@ -33,7 +33,6 @@ export async function generateMetadata({
         title: siteTitle,
         description: siteTitle,
         path: "/era",
-        imagePath: "/opengraph-image",
         noIndex: true
       })
     };
@@ -48,7 +47,6 @@ export async function generateMetadata({
       title,
       description,
       path: `/era/${era.slug}`,
-      imagePath: `/era/${era.slug}/opengraph-image`,
       imageAlt: era.name,
       keywords: ["era", era.name, era.theme, "AILE", "wiki"]
     }),

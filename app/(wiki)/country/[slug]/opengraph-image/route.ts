@@ -30,14 +30,12 @@ export async function GET(
 
 function pickAccentColor(bloc?: string) {
   switch (bloc) {
-    case "tecnopolis":
+    case "tecnologicos":
       return "#38bdf8";
-    case "confederacion":
-      return "#84cc16";
-    case "agro-energetico":
+    case "mixto":
       return "#f59e0b";
-    case "vulnerables":
-      return "#f472b6";
+    case "religiosos":
+      return "#22c55e";
     default:
       return "#2563eb";
   }

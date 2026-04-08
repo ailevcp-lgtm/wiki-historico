@@ -36,7 +36,6 @@ export async function generateMetadata({
         title: siteTitle,
         description: siteTitle,
         path: "/bloc",
-        imagePath: "/opengraph-image",
         noIndex: true
       })
     };
@@ -50,7 +49,6 @@ export async function generateMetadata({
       title,
       description: bloc.summary,
       path: `/bloc/${bloc.slug}`,
-      imagePath: "/opengraph-image",
       imageAlt: bloc.name,
       keywords: [bloc.name, "bloque", "AILE", "wiki", "Histórico 2100"]
     }),

@@ -19,7 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description: copy.home.heroDescription,
       path: "/",
-      imagePath: "/opengraph-image",
       imageAlt: copy.home.heroTitle,
       keywords: ["portada", "inicio", "wiki", "historia futurista", "AILE"]
     }),

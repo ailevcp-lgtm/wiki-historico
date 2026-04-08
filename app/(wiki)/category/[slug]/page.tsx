@@ -38,7 +38,6 @@ export async function generateMetadata({
         title: siteTitle,
         description: siteTitle,
         path: "/category",
-        imagePath: "/opengraph-image",
         noIndex: true
       })
     };
@@ -52,9 +51,9 @@ export async function generateMetadata({
       title,
       description: category.description,
       path: `/category/${category.slug}`,
-      imagePath: `/category/${category.slug}/opengraph-image`,
       imageAlt: category.name,
-      keywords: [category.name, "categoría", "AILE", "wiki"]
+      keywords: [category.name, "categoría", "AILE", "wiki"],
+      noIndex: true
     }),
     title: { absolute: title }
   };

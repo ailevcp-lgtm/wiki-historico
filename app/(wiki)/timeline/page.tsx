@@ -60,7 +60,6 @@ export async function generateMetadata({
     title,
     description,
     path: canonicalPath,
-    imagePath: "/timeline/opengraph-image",
     imageAlt: copy.timeline.title,
     keywords: ["linea del tiempo", "cronologia", "hitos", "AILE", "wiki"],
     noIndex: Boolean(search)

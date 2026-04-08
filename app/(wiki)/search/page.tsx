@@ -41,7 +41,6 @@ export async function generateMetadata({
     title,
     description,
     path: "/search",
-    imagePath: "/opengraph-image",
     imageAlt: query ? `Búsqueda: ${query}` : "Búsqueda",
     keywords: ["búsqueda", "search", "AILE", "wiki", ...(query ? [query] : [])],
     noIndex: true

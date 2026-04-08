@@ -34,7 +34,6 @@ export async function generateMetadata({
     title,
     description,
     path: "/countries",
-    imagePath: "/countries/opengraph-image",
     imageAlt: copy.countries.title,
     keywords: ["países", "regiones", "directorio", "wiki", "AILE", ...(activeBloc ? [activeBloc.name] : [])],
     noIndex: Boolean(activeBloc)

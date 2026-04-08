@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { JsonLd } from "@/components/json-ld";
 import {
+  absoluteUrl,
   aileUrl,
   buildOrganizationJsonLd,
   buildRobots,
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     description: siteDescription,
     images: [
       {
-        url: defaultOgImagePath,
+        url: absoluteUrl(defaultOgImagePath),
         width: 1200,
         height: 630,
         alt: siteTitle
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: [defaultOgImagePath]
+    images: [absoluteUrl(defaultOgImagePath)]
   }
 };
 

@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 export const siteName = "Histórico 2100";
 export const siteTitle = "Histórico 2100 | Wiki AILE";
 export const siteDescription =
-  "Wiki de AILE sobre el escenario Histórico 2100: artículos, países, eras y cronologías para explorar el universo narrativo y compartirlo con previews claros en Google, WhatsApp y redes sociales.";
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wiki.aile.com.ar";
+  "Wiki oficial de AILE sobre el escenario Histórico 2100: hitos, países y eras del modelo histórico futurista, optimizada para compartir con previews claras en WhatsApp y redes.";
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+export const siteUrl = configuredSiteUrl
+  ? configuredSiteUrl.replace(/\/+$/, "")
+  : "https://wiki.aile.com.ar";
 export const aileUrl = "https://aile.com.ar";
 export const siteLocale = "es_AR";
-export const defaultOgImagePath = "/opengraph-image";
+export const defaultOgImagePath = "/images/og-aile-whatsapp-1200x630.png";
 
 const baseKeywords = [
   "AILE",
@@ -15,9 +18,13 @@ const baseKeywords = [
   "wiki AILE",
   "historia futurista",
   "escenario geopolítico",
+  "modelo de naciones unidas",
+  "modelo historico",
   "timeline alternativo",
+  "linea del tiempo",
   "wiki.aile.com.ar",
-  "aile.com.ar"
+  "aile.com.ar",
+  "WhatsApp"
 ];
 
 export const metadataBase = new URL(siteUrl);
