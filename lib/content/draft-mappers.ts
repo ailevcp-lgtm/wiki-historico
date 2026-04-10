@@ -44,6 +44,7 @@ export function mapDraftToCountry(draft: CountryDraftCandidate): Country {
     summary: draft.summary,
     profileMarkdown: draft.profileMarkdown,
     flagUrl: draft.flagUrl,
+    representativeUrl: draft.representativeUrl,
     mapUrl: draft.mapUrl,
     organMemberships: draft.organMemberships,
     scores

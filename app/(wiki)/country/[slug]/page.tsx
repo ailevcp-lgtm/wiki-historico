@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/json-ld";
 import { ZoomableImage } from "@/components/zoomable-image";
 import { CountryOrganSummary } from "@/components/country-presence-board";
 import { CountryScorecard } from "@/components/country-scorecard";
+import { resolveCountryFlagUrl, resolveCountryRepresentativeUrl } from "@/lib/country-assets";
 import { getCountryProfileMarkdown } from "@/lib/country-profile";
 import {
   getArticleHitoIndex,
@@ -89,6 +90,8 @@ export default async function CountryPage({
   const description = sanitizeMetaDescription(
     `${country.summary || copy.countryPage.summaryFallback} Explorala en la wiki de AILE.`
   );
+  const flagUrl = resolveCountryFlagUrl(country);
+  const representativeUrl = resolveCountryRepresentativeUrl(country);
   const profileMarkdown = getCountryProfileMarkdown(
     country.profileMarkdown || copy.countryPage.profileFallbackMarkdown,
     { stripImages: Boolean(country.mapUrl) }
@@ -103,7 +106,7 @@ export default async function CountryPage({
       name: country.name,
       description,
       path: canonicalPath,
-      imagePath: country.mapUrl ?? country.flagUrl ?? `${canonicalPath}/opengraph-image`
+      imagePath: flagUrl ?? country.mapUrl ?? `${canonicalPath}/opengraph-image`
     })
   ];
 
@@ -127,12 +130,25 @@ export default async function CountryPage({
         </header>
 
         <div className="mt-6 min-w-0 space-y-6">
-          {country.flagUrl ? (
+          {flagUrl ? (
+            <section className="wiki-paper min-w-0 overflow-hidden p-4">
+              <h2 className="font-heading text-2xl">Bandera</h2>
+              <div className="mt-4 max-w-full overflow-hidden rounded-sm border border-wiki-border bg-white">
+                <ZoomableImage
+                  src={flagUrl}
+                  alt={`Bandera de ${country.name}`}
+                  className="h-auto w-full object-contain"
+                />
+              </div>
+            </section>
+          ) : null}
+
+          {representativeUrl ? (
             <section className="wiki-paper min-w-0 overflow-hidden p-4">
               <h2 className="font-heading text-2xl">Representante</h2>
               <div className="mt-4 mx-auto max-w-sm overflow-hidden rounded-sm border border-wiki-border bg-white">
                 <ZoomableImage
-                  src={country.flagUrl}
+                  src={representativeUrl}
                   alt={`Foto del representante de ${country.name}`}
                   className="h-auto w-full object-contain"
                 />

@@ -47,6 +47,7 @@ type CountryRow = {
   summary: string | null;
   profile_markdown: string | null;
   flag_url: string | null;
+  representative_url?: string | null;
   map_url: string | null;
   organ_memberships: Country["organMemberships"] | null;
 };
@@ -124,7 +125,11 @@ export async function listPersistedCountries(): Promise<Country[]> {
       bloc: row.bloc ?? undefined,
       summary: row.summary ?? "",
       profileMarkdown: row.profile_markdown ?? "",
-      flagUrl: row.flag_url ?? undefined,
+      flagUrl: "representative_url" in row ? row.flag_url ?? undefined : undefined,
+      representativeUrl:
+        "representative_url" in row
+          ? row.representative_url ?? undefined
+          : row.flag_url ?? undefined,
       mapUrl: row.map_url ?? undefined,
       organMemberships: Array.isArray(row.organ_memberships) ? row.organ_memberships : undefined,
       scores: scoresByCountryId.get(row.id) ?? []
@@ -354,6 +359,7 @@ async function persistCountry(country: Country): Promise<void> {
           summary: country.summary,
           profile_markdown: country.profileMarkdown,
           flag_url: country.flagUrl ?? null,
+          representative_url: country.representativeUrl ?? null,
           map_url: country.mapUrl ?? null,
           organ_memberships: country.organMemberships ?? null
         },
@@ -467,6 +473,9 @@ function normalizeImportedHitoId(value?: string) {
 function mapStoredCountry(country: Country): Country {
   return {
     ...country,
+    flagUrl: "representativeUrl" in country ? country.flagUrl ?? undefined : undefined,
+    representativeUrl:
+      "representativeUrl" in country ? country.representativeUrl ?? undefined : country.flagUrl ?? undefined,
     mapUrl: country.mapUrl ?? undefined,
     organMemberships: Array.isArray(country.organMemberships) ? country.organMemberships : undefined
   };

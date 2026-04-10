@@ -47,6 +47,7 @@ export interface CountryDraftCandidate {
   summary: string;
   profileMarkdown: string;
   flagUrl?: string;
+  representativeUrl?: string;
   mapUrl?: string;
   organMemberships?: CountryOrganSlug[];
   scores: CountryScoreDraft[];

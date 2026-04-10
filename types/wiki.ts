@@ -229,6 +229,7 @@ export interface Country {
   summary: string;
   profileMarkdown: string;
   flagUrl?: string;
+  representativeUrl?: string;
   mapUrl?: string;
   organMemberships?: CountryOrganSlug[];
   scores: CountryScore[];
