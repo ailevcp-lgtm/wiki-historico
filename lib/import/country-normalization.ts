@@ -120,7 +120,7 @@ const canonicalCountrySeeds: CanonicalCountrySeed[] = [
     slug: "francia",
     name: "Francia",
     aliases: ["Francia (TEC)"],
-    organMemberships: ["ag"],
+    organMemberships: ["ag", "cdh"],
     sourceMapFileName: "Francia Mapa.png"
   },
   {

@@ -2,8 +2,10 @@ import "server-only";
 
 import { inferBlocFromCountry, publicBlocDefinitions } from "@/lib/bloc-profiles";
 import { getSeedCountries, getSeedCountryOrder } from "@/lib/country-directory";
+import { normalizeCountryOrganMemberships } from "@/lib/country-organs";
 import { listPersistedArticles, listPersistedCountries } from "@/lib/content/store";
 import { normalizeHitoId } from "@/lib/hito-references";
+import { findCanonicalCountry } from "@/lib/import/country-normalization";
 import { getSiteConfig } from "@/lib/site-config/store";
 import { normalizeForSearch, stripMarkdown, truncate } from "@/lib/utils";
 import type { Article, Country, HitoReferenceTarget, PublicWikiCopy } from "@/types/wiki";
@@ -165,11 +167,13 @@ export async function getCountryBySlug(slug: string): Promise<Country | undefine
 
 export async function getAllCountries(): Promise<Country[]> {
   const seedCountries = await getSeedCountries();
-  const mergedCountries = mergeBySlug(seedCountries, await listPersistedCountries());
+  const persistedCountries = normalizeCountryRoster(await listPersistedCountries());
+  const mergedCountries = normalizeCountryRoster(mergeBySlug(seedCountries, persistedCountries));
   const seedMap = new Map(seedCountries.map((country) => [country.slug, country] as const));
 
   return mergedCountries
     .map((country) => applySeedCountryFallback(country, seedMap.get(country.slug)))
+    .filter((country) => (country.organMemberships?.length ?? 0) > 0)
     .sort((left, right) =>
     left.name.localeCompare(right.name, "es")
   );
@@ -258,10 +262,10 @@ function mergeBySlug<T extends { slug: string }>(baseItems: T[], overrideItems: 
 
 function applySeedCountryFallback(country: Country, seedCountry?: Country): Country {
   if (!seedCountry) {
-    return {
+    return applyCountryDataCorrections({
       ...country,
       bloc: inferBlocFromCountry(country)
-    };
+    });
   }
 
   const merged = {
@@ -270,10 +274,119 @@ function applySeedCountryFallback(country: Country, seedCountry?: Country): Coun
     organMemberships: country.organMemberships ?? seedCountry.organMemberships
   };
 
-  return {
+  return applyCountryDataCorrections({
     ...merged,
     bloc: inferBlocFromCountry(merged)
+  });
+}
+
+function applyCountryDataCorrections(country: Country): Country {
+  if (country.slug !== "francia") {
+    return country;
+  }
+
+  return {
+    ...country,
+    bloc: country.bloc ?? "tecnologicos",
+    organMemberships: normalizeCountryOrganMemberships([...(country.organMemberships ?? []), "cdh"])
   };
+}
+
+function normalizeCountryRoster(countries: Country[]) {
+  const normalizedBySlug = new Map<string, Country>();
+
+  for (const country of countries) {
+    const normalized = applyCountryDataCorrections(canonicalizeCountryIdentity(country));
+    const existing = normalizedBySlug.get(normalized.slug);
+
+    if (!existing) {
+      normalizedBySlug.set(normalized.slug, normalized);
+      continue;
+    }
+
+    normalizedBySlug.set(normalized.slug, mergeDuplicateCountries(existing, normalized));
+  }
+
+  return [...normalizedBySlug.values()];
+}
+
+function canonicalizeCountryIdentity(country: Country): Country {
+  const canonical = findCanonicalCountry(country.slug) ?? findCanonicalCountry(country.name);
+
+  if (!canonical) {
+    return country;
+  }
+
+  const mergedOrganMemberships = normalizeCountryOrganMemberships([
+    ...(canonical.organMemberships ?? []),
+    ...(country.organMemberships ?? [])
+  ]);
+
+  return {
+    ...country,
+    slug: canonical.slug,
+    name: canonical.name,
+    organMemberships:
+      mergedOrganMemberships ?? country.organMemberships ?? normalizeCountryOrganMemberships(canonical.organMemberships)
+  };
+}
+
+function mergeDuplicateCountries(existing: Country, incoming: Country): Country {
+  const existingScore = countryPriorityScore(existing);
+  const incomingScore = countryPriorityScore(incoming);
+  const primary = incomingScore >= existingScore ? incoming : existing;
+  const secondary = primary === incoming ? existing : incoming;
+
+  return {
+    ...secondary,
+    ...primary,
+    slug: primary.slug,
+    name: primary.name,
+    bloc: primary.bloc ?? secondary.bloc,
+    summary: pickPreferredNarrative(primary.summary, secondary.summary),
+    profileMarkdown: pickPreferredNarrative(primary.profileMarkdown, secondary.profileMarkdown),
+    flagUrl: primary.flagUrl ?? secondary.flagUrl,
+    mapUrl: primary.mapUrl ?? secondary.mapUrl,
+    organMemberships: normalizeCountryOrganMemberships([
+      ...(secondary.organMemberships ?? []),
+      ...(primary.organMemberships ?? [])
+    ]),
+    scores: primary.scores.length >= secondary.scores.length ? primary.scores : secondary.scores
+  };
+}
+
+function countryPriorityScore(country: Country) {
+  let score = 0;
+
+  if (hasEditorialNarrative(country.summary, "figura en la matriz base de países del escenario")) {
+    score += 2;
+  }
+
+  if (hasEditorialNarrative(country.profileMarkdown, "## Ficha base")) {
+    score += 2;
+  }
+
+  score += country.organMemberships?.length ?? 0;
+  score += country.scores.length > 0 ? 2 : 0;
+  score += country.bloc ? 1 : 0;
+  score += country.flagUrl ? 1 : 0;
+  score += country.mapUrl ? 1 : 0;
+
+  return score;
+}
+
+function hasEditorialNarrative(value: string, placeholderMarker: string) {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return false;
+  }
+
+  return !trimmed.includes(placeholderMarker);
+}
+
+function pickPreferredNarrative(primary: string, secondary: string) {
+  return primary.trim() ? primary : secondary;
 }
 
 function getHitoOrder(hitoId?: string) {

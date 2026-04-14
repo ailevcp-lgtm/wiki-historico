@@ -30,6 +30,8 @@ export function WikiShell({
   const [headerHeight, setHeaderHeight] = useState(96);
   const headerRef = useRef<HTMLElement | null>(null);
   const selectedBloc = searchParams.get("bloc");
+  const homeLinkActive = pathname === "/";
+  const countriesLinkActive = pathname === "/countries" || pathname.startsWith("/country/");
 
   useEffect(() => {
     const header = headerRef.current;
@@ -95,6 +97,7 @@ export function WikiShell({
                   </div>
                 </div>
               </Link>
+
             </div>
 
             <div className="border-t border-wiki-border py-3">
@@ -121,6 +124,15 @@ export function WikiShell({
               height: `calc(100vh - ${headerHeight}px)`
             }}
           >
+            <NavSection title={copy.navigationSectionTitle}>
+              <NavItem href="/" active={homeLinkActive} onNavigate={() => setIsOpen(false)}>
+                {copy.homeLabel}
+              </NavItem>
+              <NavItem href="/countries" active={countriesLinkActive} onNavigate={() => setIsOpen(false)}>
+                {copy.countriesLabel}
+              </NavItem>
+            </NavSection>
+
             <NavSection title={copy.erasSectionTitle}>
               {eras.map((era) => (
                 <NavItem
@@ -155,6 +167,15 @@ export function WikiShell({
               maxHeight: `calc(100vh - ${headerHeight}px)`
             }}
           >
+            <NavSection title={copy.navigationSectionTitle}>
+              <NavItem href="/" active={homeLinkActive} onNavigate={() => setIsOpen(false)}>
+                {copy.homeLabel}
+              </NavItem>
+              <NavItem href="/countries" active={countriesLinkActive} onNavigate={() => setIsOpen(false)}>
+                {copy.countriesLabel}
+              </NavItem>
+            </NavSection>
+
             <NavSection title={copy.erasSectionTitle}>
               {eras.map((era) => (
                 <NavItem

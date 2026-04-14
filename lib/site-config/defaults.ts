@@ -28,7 +28,7 @@ export const defaultPublicWikiCopy: PublicWikiCopy = {
     blocsSectionKicker: "Mapa político resumido",
     directorySectionTitle: "Directorio de países",
     directorySectionDescription:
-      "Abrí la lista completa de países y regiones para ver su presencia en AG, CDH y CSyM y navegar directo a cada ficha.",
+      "Abrí la lista completa de países y regiones para ver su presencia en AG, CCH y CSyM y navegar directo a cada ficha.",
     directorySectionButtonLabel: "Ver países"
   },
   timeline: {

@@ -11,7 +11,7 @@ export const countryOrganDefinitions: Array<{
   },
   {
     slug: "cdh",
-    label: "CDH"
+    label: "CCH"
   },
   {
     slug: "csym",

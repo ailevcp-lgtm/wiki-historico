@@ -4,6 +4,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { cache } from "react";
 
+import { normalizeCountryOrganMemberships } from "@/lib/country-organs";
+import { findCanonicalCountry } from "@/lib/import/country-normalization";
 import { slugify } from "@/lib/utils";
 import type { Country } from "@/types/wiki";
 
@@ -45,14 +47,30 @@ const fallbackCountryNames = [
 
 export const getSeedCountries = cache(async (): Promise<Country[]> => {
   const countryNames = await readCountryNamesFromCsv();
+  const countries: Country[] = [];
+  const seenSlugs = new Set<string>();
 
-  return countryNames.map((name) => ({
-    slug: slugify(name),
-    name,
-    summary: buildSeedSummary(name),
-    profileMarkdown: buildSeedProfile(name),
-    scores: []
-  }));
+  for (const nameFromSource of countryNames) {
+    const canonical = findCanonicalCountry(nameFromSource);
+    const slug = canonical?.slug ?? slugify(nameFromSource);
+
+    if (seenSlugs.has(slug)) {
+      continue;
+    }
+
+    const name = canonical?.name ?? nameFromSource;
+    seenSlugs.add(slug);
+    countries.push({
+      slug,
+      name,
+      summary: buildSeedSummary(name),
+      profileMarkdown: buildSeedProfile(name),
+      organMemberships: normalizeCountryOrganMemberships(canonical?.organMemberships),
+      scores: []
+    });
+  }
+
+  return countries;
 });
 
 export const getSeedCountryOrder = cache(async () => {
