@@ -137,6 +137,7 @@ export function parseCountryPayload(input: unknown):
       summary: normalizeString(payload.summary) ?? "",
       profileMarkdown: normalizeString(payload.profileMarkdown) ?? "",
       flagUrl: normalizeString(payload.flagUrl) ?? undefined,
+      representativeUrl: normalizeString(payload.representativeUrl) ?? undefined,
       mapUrl: normalizeString(payload.mapUrl) ?? undefined,
       organMemberships: normalizeCountryOrganMemberships(payload.organMemberships as Country["organMemberships"]) ?? [],
       scores: scores.value

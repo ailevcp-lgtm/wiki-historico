@@ -470,7 +470,7 @@ function parseCountryDocument(
     eraSlug: currentEraSlug,
     summary: summary || `Perfil narrativo importado desde ${fileName}.`,
     profileMarkdown,
-    flagUrl: representativeImageUrl,
+    representativeUrl: representativeImageUrl,
     mapUrl:
       canonical?.sourceMapFileName
         ? getHistoryCountryMapPublicPath(canonical.slug, canonical.sourceMapFileName)

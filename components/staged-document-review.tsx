@@ -10,6 +10,7 @@ import { CountryScorecard } from "@/components/country-scorecard";
 import { Infobox } from "@/components/infobox";
 import { TableOfContents } from "@/components/table-of-contents";
 import { countryOrganDefinitions } from "@/lib/country-organs";
+import { resolveCountryFlagUrl } from "@/lib/country-assets";
 import { getCountryProfileMarkdown } from "@/lib/country-profile";
 import {
   mapDraftToArticle,
@@ -83,6 +84,7 @@ type CountryFormState = {
   hitoReference: string;
   summary: string;
   flagUrl: string;
+  representativeUrl: string;
   mapUrl: string;
   profileMarkdown: string;
   organMemberships: CountryOrganSlug[];
@@ -481,6 +483,7 @@ function StagedCountryReview({
   const deferredProfileMarkdown = useDeferredValue(form.profileMarkdown);
   const previewDraft = buildCountryDraft(form, preview.draft.historicalScores, deferredProfileMarkdown);
   const previewCountry = mapDraftToCountry(previewDraft);
+  const previewFlagUrl = resolveCountryFlagUrl(previewCountry);
   const previewSummary = previewCountry.summary || copy.countryPage.summaryFallback;
   const previewProfileMarkdown = getCountryProfileMarkdown(
     deferredProfileMarkdown || copy.countryPage.profileFallbackMarkdown,
@@ -566,12 +569,27 @@ function StagedCountryReview({
               </header>
 
               <div className="mt-6 space-y-6">
-                {previewCountry.flagUrl ? (
+                {previewFlagUrl ? (
+                  <section className="wiki-paper p-5">
+                    <h2 className="font-heading text-2xl">Bandera</h2>
+                    <div className="mt-4 overflow-hidden rounded-sm border border-wiki-border bg-white">
+                      <Image
+                        src={previewFlagUrl}
+                        alt={`Bandera de ${previewCountry.name || "la ficha"}`}
+                        width={960}
+                        height={640}
+                        className="h-auto w-full object-contain"
+                      />
+                    </div>
+                  </section>
+                ) : null}
+
+                {previewCountry.representativeUrl ? (
                   <section className="wiki-paper p-5">
                     <h2 className="font-heading text-2xl">Representante</h2>
                     <div className="mt-4 mx-auto max-w-sm overflow-hidden rounded-sm border border-wiki-border bg-white">
                       <Image
-                        src={previewCountry.flagUrl}
+                        src={previewCountry.representativeUrl}
                         alt={`Foto del representante de ${previewCountry.name || "la ficha"}`}
                         width={640}
                         height={800}
@@ -697,10 +715,21 @@ function StagedCountryReview({
               />
             </Field>
 
-            <Field label="Foto del representante URL">
+            <Field label="Bandera URL">
               <input
                 value={form.flagUrl}
                 onChange={(event) => setForm((current) => ({ ...current, flagUrl: event.target.value }))}
+                className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
+                placeholder="https://... o /images/..."
+              />
+            </Field>
+
+            <Field label="Foto del representante URL">
+              <input
+                value={form.representativeUrl}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, representativeUrl: event.target.value }))
+                }
                 className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
                 placeholder="https://... o /images/..."
               />
@@ -1059,6 +1088,7 @@ function createCountryFormState(draft: CountryDraftCandidate): CountryFormState 
     hitoReference: draft.hitoReference ?? "",
     summary: draft.summary,
     flagUrl: draft.flagUrl ?? "",
+    representativeUrl: draft.representativeUrl ?? "",
     mapUrl: draft.mapUrl ?? "",
     profileMarkdown: draft.profileMarkdown,
     organMemberships: draft.organMemberships ?? [],
@@ -1093,6 +1123,7 @@ function buildCountryDraft(
     summary: form.summary.trim(),
     profileMarkdown: profileMarkdownOverride ?? form.profileMarkdown,
     flagUrl: form.flagUrl.trim() || undefined,
+    representativeUrl: form.representativeUrl.trim() || undefined,
     mapUrl: form.mapUrl.trim() || undefined,
     organMemberships: form.organMemberships,
     scores: form.scores

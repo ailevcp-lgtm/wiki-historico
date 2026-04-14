@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 
 import type { ImportPreviewResult } from "@/types/import";
+import { resolveCountryFlagUrl } from "@/lib/country-assets";
+import { mapDraftToCountry } from "@/lib/content/draft-mappers";
 
 type BatchImportError = {
   fileName: string;
@@ -395,6 +397,8 @@ function HitoPreview({ result }: { result: Extract<ImportPreviewResult, { kind: 
 }
 
 function CountryPreview({ result }: { result: Extract<ImportPreviewResult, { kind: "country" }> }) {
+  const resolvedFlagUrl = resolveCountryFlagUrl(mapDraftToCountry(result.draft));
+
   return (
     <>
       <section className="wiki-paper p-5 md:p-6">
@@ -405,7 +409,8 @@ function CountryPreview({ result }: { result: Extract<ImportPreviewResult, { kin
           <Field label="Bloque" value={result.draft.bloc} />
           <Field label="Era" value={result.draft.eraSlug} />
           <Field label="Hito de referencia" value={result.draft.hitoReference} />
-          <Field label="Foto representante" value={result.draft.flagUrl} />
+          <Field label="Bandera" value={resolvedFlagUrl} />
+          <Field label="Foto representante" value={result.draft.representativeUrl} />
           <Field label="Mapa" value={result.draft.mapUrl} />
           <Field
             label="Snapshots históricos"

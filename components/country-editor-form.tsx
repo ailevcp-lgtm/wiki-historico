@@ -49,6 +49,7 @@ export function CountryEditorForm({
   const [bloc, setBloc] = useState(initialCountry?.bloc ?? "");
   const [summary, setSummary] = useState(initialCountry?.summary ?? "");
   const [flagUrl, setFlagUrl] = useState(initialCountry?.flagUrl ?? "");
+  const [representativeUrl, setRepresentativeUrl] = useState(initialCountry?.representativeUrl ?? "");
   const [mapUrl, setMapUrl] = useState(initialCountry?.mapUrl ?? "");
   const [profileMarkdown, setProfileMarkdown] = useState(initialCountry?.profileMarkdown ?? "");
   const [organMemberships, setOrganMemberships] = useState<CountryOrganSlug[]>(
@@ -70,6 +71,7 @@ export function CountryEditorForm({
       summary: summary.trim(),
       profileMarkdown,
       flagUrl: flagUrl.trim() || undefined,
+      representativeUrl: representativeUrl.trim() || undefined,
       mapUrl: mapUrl.trim() || undefined,
       organMemberships,
       scores: scores.map(formStateToScore).filter(hasSnapshotContent)
@@ -183,10 +185,19 @@ export function CountryEditorForm({
             </select>
           </Field>
 
-          <Field label="Foto del representante / imagen URL">
+          <Field label="Bandera URL">
             <input
               value={flagUrl}
               onChange={(event) => setFlagUrl(event.target.value)}
+              className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
+              placeholder="https://... o /images/..."
+            />
+          </Field>
+
+          <Field label="Foto del representante / imagen URL">
+            <input
+              value={representativeUrl}
+              onChange={(event) => setRepresentativeUrl(event.target.value)}
               className="w-full rounded-sm border border-wiki-border bg-white px-3 py-2"
               placeholder="https://... o /images/..."
             />
