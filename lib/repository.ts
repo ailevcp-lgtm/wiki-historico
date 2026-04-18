@@ -281,15 +281,24 @@ function applySeedCountryFallback(country: Country, seedCountry?: Country): Coun
 }
 
 function applyCountryDataCorrections(country: Country): Country {
-  if (country.slug !== "francia") {
-    return country;
+  switch (country.slug) {
+    case "francia":
+      return {
+        ...country,
+        bloc: country.bloc ?? "tecnologicos",
+        organMemberships: normalizeCountryOrganMemberships([...(country.organMemberships ?? []), "cdh"])
+      };
+    case "sudafrica":
+      return {
+        ...country,
+        organMemberships: normalizeCountryOrganMemberships([
+          ...(country.organMemberships ?? []),
+          "cdh"
+        ])
+      };
+    default:
+      return country;
   }
-
-  return {
-    ...country,
-    bloc: country.bloc ?? "tecnologicos",
-    organMemberships: normalizeCountryOrganMemberships([...(country.organMemberships ?? []), "cdh"])
-  };
 }
 
 function normalizeCountryRoster(countries: Country[]) {

@@ -218,7 +218,7 @@ const canonicalCountrySeeds: CanonicalCountrySeed[] = [
     slug: "sudafrica",
     name: "Sudáfrica",
     aliases: ["Sudafrica", "Sudafrica (MIXTO)", "Sudafrica (T d M)"],
-    organMemberships: ["ag", "csym"],
+    organMemberships: ["ag", "cdh", "csym"],
     sourceMapFileName: "Sudafrica Mapa.png"
   },
   {
