@@ -296,6 +296,14 @@ function applyCountryDataCorrections(country: Country): Country {
           "cdh"
         ])
       };
+    case "brasil":
+      return {
+        ...country,
+        organMemberships: normalizeCountryOrganMemberships([
+          ...(country.organMemberships ?? []),
+          "cdh"
+        ])
+      };
     default:
       return country;
   }

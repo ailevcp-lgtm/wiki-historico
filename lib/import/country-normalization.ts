@@ -31,7 +31,7 @@ const canonicalCountrySeeds: CanonicalCountrySeed[] = [
     slug: "brasil",
     name: "Brasil",
     aliases: ["[Brasil]", "Brasil (REL)"],
-    organMemberships: ["ag"],
+    organMemberships: ["ag", "cdh"],
     sourceMapFileName: "Brasil Mapa.png"
   },
   {
